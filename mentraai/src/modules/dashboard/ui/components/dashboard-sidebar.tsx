@@ -72,13 +72,13 @@ export function DashboardSidebar() {
         <SidebarHeader className="border-b border-gray-100 p-4">
           <div className="flex items-center gap-3">
             <div className="flex-shrink-0">
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center shadow-sm">
+              <div className="w-8 h-8 bg-gradient-to-br from-emerald-600 to-teal-600 rounded-lg flex items-center justify-center shadow-sm">
                 <Sparkles className="w-4 h-4 text-white" />
               </div>
             </div>
             <div className="group-data-[collapsible=icon]:hidden min-w-0">
-              <span className="text-lg font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                HuddleAI
+              <span className="text-lg font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
+                MentraAI
               </span>
               <p className="text-xs text-gray-500 font-medium">Dashboard</p>
             </div>

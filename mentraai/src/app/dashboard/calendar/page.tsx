@@ -3,7 +3,7 @@ import { CalendarView } from '@/modules/calendar/views/calendar-view';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Calendar | HuddleAI',
+  title: 'Calendar | MentraAI',
   description: 'View and manage your meeting schedule',
 };
 

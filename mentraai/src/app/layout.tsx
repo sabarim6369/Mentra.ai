@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "HuddleAI - AI-Powered Collaboration Platform",
+  title: "MentraAI - AI-Powered Collaboration Platform",
   description: "Transform your workflow with AI-powered collaboration tools",
 };
 

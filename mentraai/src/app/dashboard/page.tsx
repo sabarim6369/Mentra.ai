@@ -26,35 +26,35 @@ export default function Dashboard() {
       description: 'Create a new meeting with AI assistance',
       icon: CalendarPlus,
       action: () => router.push('/dashboard/meetings'),
-      color: 'from-blue-500 to-indigo-600'
+      color: 'from-violet-500 to-purple-600'
     },
     {
       title: 'Create Agent',
       description: 'Build a new AI agent for your workflow',
       icon: Bot,
       action: () => router.push('/dashboard/agents'),
-      color: 'from-purple-500 to-violet-600'
+      color: 'from-fuchsia-500 to-pink-600'
     },
     {
       title: 'Calendar',
       description: 'See all your meetings in one place',
       icon: CalendarDays,
       action: () => router.push('/dashboard/calendar'),
-      color: 'from-green-500 to-emerald-600'
+      color: 'from-emerald-500 to-teal-600'
     }
   ];
 
   return (
     <div className="p-6 space-y-6">
       {/* Welcome Section */}
-      <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 p-6 text-white">
+      <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-violet-600 via-purple-600 to-fuchsia-700 p-6 text-white">
         <div className="relative">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold mb-1">
                 Welcome back, {session.user.name?.split(' ')[0]}! 👋
               </h1>
-              <p className="text-blue-100">
+              <p className="text-violet-100">
                 Ready to supercharge your productivity with AI?
               </p>
             </div>
@@ -100,7 +100,7 @@ export default function Dashboard() {
           return (
             <Card 
               key={action.title} 
-              className="bg-white/80 backdrop-blur-sm border-gray-200/50 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-[1.02] group cursor-pointer"
+              className="bg-slate-900/50 backdrop-blur-sm border-violet-500/20 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-[1.02] group cursor-pointer"
               onClick={action.action}
             >
               <CardContent className="p-4">
@@ -109,14 +109,14 @@ export default function Dashboard() {
                     <IconComponent className="w-5 h-5 text-white" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-gray-900 mb-1 group-hover:text-blue-600 transition-colors">
+                    <h3 className="font-semibold text-white mb-1 group-hover:text-violet-400 transition-colors">
                       {action.title}
                     </h3>
-                    <p className="text-sm text-gray-600 group-hover:text-gray-700 transition-colors">
+                    <p className="text-sm text-gray-400 group-hover:text-gray-300 transition-colors">
                       {action.description}
                     </p>
                   </div>
-                  <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-blue-500 group-hover:translate-x-0.5 transition-all flex-shrink-0" />
+                  <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-violet-400 group-hover:translate-x-0.5 transition-all flex-shrink-0" />
                 </div>
               </CardContent>
             </Card>

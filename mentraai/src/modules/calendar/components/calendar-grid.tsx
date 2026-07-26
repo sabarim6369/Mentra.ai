@@ -26,12 +26,12 @@ export const CalendarGrid = ({ days, currentDate }: CalendarGridProps) => {
   };
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-      <div className="grid grid-cols-7 border-b border-gray-200">
+    <div className="bg-slate-900/50 rounded-xl border border-violet-500/20 shadow-sm overflow-hidden">
+      <div className="grid grid-cols-7 border-b border-violet-500/20">
         {WEEKDAYS.map((day) => (
           <div 
             key={day} 
-            className="p-4 text-center text-sm font-semibold text-gray-600 bg-gray-50 border-r border-gray-200 last:border-r-0"
+            className="p-4 text-center text-sm font-semibold text-gray-300 bg-slate-800 border-r border-violet-500/20 last:border-r-0"
           >
             {day}
           </div>
@@ -42,17 +42,17 @@ export const CalendarGrid = ({ days, currentDate }: CalendarGridProps) => {
         {days.map((day, index) => (
           <div 
             key={index}
-            className={`min-h-32 p-2 border-r border-b border-gray-200 last:border-r-0 ${
-              !day.isCurrentMonth ? 'bg-gray-50' : 'bg-white'
+            className={`min-h-32 p-2 border-r border-b border-violet-500/20 last:border-r-0 ${
+              !day.isCurrentMonth ? 'bg-slate-800/50' : 'bg-slate-900/50'
             } ${
-              isSelected(day.date) ? 'bg-blue-50 border-blue-200' : ''
+              isSelected(day.date) ? 'bg-violet-500/20 border-violet-500/40' : ''
             }`}
           >
             <div className="flex flex-col h-full">
               <div className={`text-sm font-medium mb-2 ${
-                !day.isCurrentMonth ? 'text-gray-400' : 
-                isToday(day.date) ? 'text-white bg-blue-600 w-7 h-7 rounded-full flex items-center justify-center' :
-                'text-gray-900'
+                !day.isCurrentMonth ? 'text-gray-500' : 
+                isToday(day.date) ? 'text-white bg-violet-600 w-7 h-7 rounded-full flex items-center justify-center' :
+                'text-gray-200'
               }`}>
                 {day.date.getDate()}
               </div>
@@ -66,7 +66,7 @@ export const CalendarGrid = ({ days, currentDate }: CalendarGridProps) => {
                   />
                 ))}
                 {day.events.length > 3 && (
-                  <div className="text-xs text-gray-500 text-center py-1">
+                  <div className="text-xs text-gray-400 text-center py-1">
                     +{day.events.length - 3} more
                   </div>
                 )}

@@ -69,22 +69,22 @@ export const CalendarView = () => {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <div className="w-10 h-10 bg-gray-200 rounded-xl animate-pulse" />
+            <div className="w-10 h-10 bg-slate-800 rounded-xl animate-pulse" />
             <div className="space-y-2">
-              <div className="h-6 bg-gray-200 rounded w-32 animate-pulse" />
-              <div className="h-4 bg-gray-200 rounded w-48 animate-pulse" />
+              <div className="h-6 bg-slate-800 rounded w-32 animate-pulse" />
+              <div className="h-4 bg-slate-800 rounded w-48 animate-pulse" />
             </div>
           </div>
           <div className="flex space-x-4">
-            <div className="h-8 bg-gray-200 rounded w-32 animate-pulse" />
-            <div className="h-8 bg-gray-200 rounded w-24 animate-pulse" />
+            <div className="h-8 bg-slate-800 rounded w-32 animate-pulse" />
+            <div className="h-8 bg-slate-800 rounded w-24 animate-pulse" />
           </div>
         </div>
         
-        <div className="bg-white rounded-xl border border-gray-200 p-8">
+        <div className="bg-slate-900/50 rounded-xl border border-violet-500/20 p-8">
           <div className="grid grid-cols-7 gap-4">
             {Array.from({ length: 35 }).map((_, i) => (
-              <div key={i} className="h-32 bg-gray-100 rounded-lg animate-pulse" />
+              <div key={i} className="h-32 bg-slate-800 rounded-lg animate-pulse" />
             ))}
           </div>
         </div>
@@ -106,20 +106,20 @@ export const CalendarView = () => {
       <div className="flex justify-between items-center">
         <div className="flex space-x-6">
           <div className="flex items-center space-x-2">
-            <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-            <span className="text-sm text-gray-600">
+            <div className="w-3 h-3 bg-violet-500 rounded-full"></div>
+            <span className="text-sm text-gray-300">
               Upcoming ({upcomingCount})
             </span>
           </div>
           <div className="flex items-center space-x-2">
-            <div className="w-3 h-3 bg-gray-400 rounded-full"></div>
-            <span className="text-sm text-gray-600">
+            <div className="w-3 h-3 bg-slate-400 rounded-full"></div>
+            <span className="text-sm text-gray-300">
               Completed ({completedCount})
             </span>
           </div>
         </div>
 
-        <div className="text-sm text-gray-500">
+        <div className="text-sm text-gray-400">
           Showing {filteredEvents.length} {showCompleted ? 'completed' : 'upcoming'} events
         </div>
       </div>
@@ -130,17 +130,17 @@ export const CalendarView = () => {
       />
 
       {filteredEvents.length === 0 && (
-        <div className="text-center py-12 bg-white rounded-xl border border-gray-200">
+        <div className="text-center py-12 bg-slate-900/50 rounded-xl border border-violet-500/20">
           <div className="text-gray-500">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4">
               <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
             </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
+            <h3 className="text-lg font-medium text-white mb-2">
               No {showCompleted ? 'completed' : 'upcoming'} events
             </h3>
-            <p className="text-gray-600">
+            <p className="text-gray-400">
               {showCompleted 
                 ? 'No completed meetings to display in this month.' 
                 : 'Schedule your first meeting to see it appear on the calendar.'}

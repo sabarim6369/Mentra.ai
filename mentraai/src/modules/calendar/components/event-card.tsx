@@ -21,9 +21,9 @@ interface EventModalProps {
 }
 
 const statusColors = {
-  upcoming: { bg: 'bg-blue-50', text: 'text-blue-700', border: 'border-blue-200' },
-  completed: { bg: 'bg-gray-50', text: 'text-gray-700', border: 'border-gray-200' },
-  cancelled: { bg: 'bg-red-50', text: 'text-red-700', border: 'border-red-200' },
+  upcoming: { bg: 'bg-violet-500/20', text: 'text-violet-300', border: 'border-violet-500/30' },
+  completed: { bg: 'bg-slate-500/20', text: 'text-slate-300', border: 'border-slate-500/30' },
+  cancelled: { bg: 'bg-red-500/20', text: 'text-red-300', border: 'border-red-500/30' },
 };
 
 const EventModal = ({ event, isOpen, onClose }: EventModalProps) => {
@@ -80,7 +80,7 @@ const EventModal = ({ event, isOpen, onClose }: EventModalProps) => {
       <DialogContent className="max-w-md">
         <DialogHeader className="space-y-4">
           <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
+            <div className="w-12 h-12 bg-gradient-to-br from-violet-500 to-purple-600 rounded-xl flex items-center justify-center">
               {event.type === 'meeting' ? (
                 <Video className="w-6 h-6 text-white" />
               ) : (
@@ -88,7 +88,7 @@ const EventModal = ({ event, isOpen, onClose }: EventModalProps) => {
               )}
             </div>
             <div className="flex-1">
-              <DialogTitle className="text-xl font-semibold text-gray-900">
+              <DialogTitle className="text-xl font-semibold text-white">
                 {event.title}
               </DialogTitle>
               <Badge 
@@ -103,36 +103,36 @@ const EventModal = ({ event, isOpen, onClose }: EventModalProps) => {
 
         <div className="space-y-6">
           <div className="space-y-4">
-            <div className="flex items-center space-x-3 text-gray-600">
+            <div className="flex items-center space-x-3 text-gray-300">
               <Calendar className="w-5 h-5" />
               <div>
-                <p className="font-medium text-gray-900">{formatDate(event.startTime)}</p>
+                <p className="font-medium text-white">{formatDate(event.startTime)}</p>
                 <p className="text-sm">{formatTime(event.startTime)} - {formatTime(event.endTime)}</p>
               </div>
             </div>
 
-            <div className="flex items-center space-x-3 text-gray-600">
+            <div className="flex items-center space-x-3 text-gray-300">
               <Clock className="w-5 h-5" />
               <div>
-                <p className="font-medium text-gray-900">Duration</p>
+                <p className="font-medium text-white">Duration</p>
                 <p className="text-sm">{getDuration()}</p>
               </div>
             </div>
 
             {event.agentName && (
-              <div className="flex items-center space-x-3 text-gray-600">
+              <div className="flex items-center space-x-3 text-gray-300">
                 <Bot className="w-5 h-5" />
                 <div>
-                  <p className="font-medium text-gray-900">AI Agent</p>
+                  <p className="font-medium text-white">AI Agent</p>
                   <p className="text-sm">{event.agentName}</p>
                 </div>
               </div>
             )}
 
-            <div className="flex items-center space-x-3 text-gray-600">
+            <div className="flex items-center space-x-3 text-gray-300">
               <MapPin className="w-5 h-5" />
               <div>
-                <p className="font-medium text-gray-900">Type</p>
+                <p className="font-medium text-white">Type</p>
                 <p className="text-sm capitalize">{event.type}</p>
               </div>
             </div>
@@ -140,10 +140,10 @@ const EventModal = ({ event, isOpen, onClose }: EventModalProps) => {
           </div>
 
           {event.type === 'meeting' && event.meetingId && (
-            <div className="flex space-x-3 pt-4 border-t">
+            <div className="flex space-x-3 pt-4 border-t border-violet-500/20">
               {event.status === 'upcoming' && (
                 <Button 
-                  className="flex-1 bg-green-600 hover:bg-green-700 text-white"
+                  className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white"
                   onClick={handleStartMeeting}
                 >
                   <Play className="w-4 h-4 mr-2" />

@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 function CalendarSkeleton() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/40 p-8">
+    <div className="min-h-screen bg-gradient-to-br from-violet-950 via-purple-950 to-slate-950 p-8">
       <div className="max-w-7xl mx-auto space-y-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
@@ -54,7 +54,7 @@ function CalendarSkeleton() {
 
 export default function CalendarPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/40">
+    <div className="min-h-screen bg-gradient-to-br from-violet-950 via-purple-950 to-slate-950">
       <div className="p-8 max-w-7xl mx-auto">
         <Suspense fallback={<CalendarSkeleton />}>
           <CalendarView />

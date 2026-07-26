@@ -61,27 +61,27 @@ export function DashboardNavbar() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 border-b border-gray-200/50 bg-white/95 backdrop-blur-sm">
+      <header className="sticky top-0 z-40 border-b border-violet-500/20 bg-black/95 backdrop-blur-sm">
         <div className="flex h-14 items-center gap-4 px-4">
           <SidebarTrigger className="h-7 w-7" />
           
           <div className="flex items-center gap-2 flex-1">
-            <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-            <h1 className="font-semibold text-gray-900">Dashboard</h1>
+            <div className="w-2 h-2 bg-violet-500 rounded-full"></div>
+            <h1 className="font-semibold text-white">Dashboard</h1>
           </div>
 
           <Button
             variant="outline"
             onClick={() => setIsSearchOpen(true)}
-            className="relative w-64 justify-start text-sm text-gray-500 bg-gray-50/80 border-gray-200/50 hover:bg-gray-100/80"
+            className="relative w-64 justify-start text-sm text-gray-400 bg-slate-900/80 border-violet-500/30 hover:bg-slate-800/80"
           >
             <Search className="mr-2 h-4 w-4" />
             <span>Search anything...</span>
             <div className="ml-auto flex items-center gap-0.5">
-              <kbd className="pointer-events-none h-5 select-none items-center gap-1 rounded bg-gray-100 px-1.5 font-mono text-[10px] font-medium text-gray-600 opacity-100 hidden sm:flex">
+              <kbd className="pointer-events-none h-5 select-none items-center gap-1 rounded bg-slate-800 px-1.5 font-mono text-[10px] font-medium text-gray-300 opacity-100 hidden sm:flex">
                 <Command className="h-3 w-3" />
               </kbd>
-              <kbd className="pointer-events-none h-5 select-none items-center gap-1 rounded bg-gray-100 px-1.5 font-mono text-[10px] font-medium text-gray-600 opacity-100 hidden sm:flex">
+              <kbd className="pointer-events-none h-5 select-none items-center gap-1 rounded bg-slate-800 px-1.5 font-mono text-[10px] font-medium text-gray-300 opacity-100 hidden sm:flex">
                 K
               </kbd>
             </div>
@@ -95,7 +95,7 @@ export function DashboardNavbar() {
           <CommandEmpty>
             <div className="flex flex-col items-center py-6 text-center">
               <Search className="h-6 w-6 text-gray-400 mb-2" />
-              <p className="text-sm text-gray-600">No results found.</p>
+              <p className="text-sm text-gray-300">No results found.</p>
             </div>
           </CommandEmpty>
           <CommandGroup heading="Quick Actions">
@@ -106,12 +106,12 @@ export function DashboardNavbar() {
                 className="flex items-center py-2 cursor-pointer"
               >
                 <div className="flex items-center gap-3 flex-1">
-                  <div className="w-6 h-6 bg-blue-100 rounded-md flex items-center justify-center">
-                    <div className="w-2 h-2 bg-blue-500 rounded-sm"></div>
+                  <div className="w-6 h-6 bg-violet-500/20 rounded-md flex items-center justify-center">
+                    <div className="w-2 h-2 bg-violet-500 rounded-sm"></div>
                   </div>
                   <div>
-                    <div className="font-medium text-gray-900">{item.title}</div>
-                    <div className="text-sm text-gray-600">{item.description}</div>
+                    <div className="font-medium text-gray-200">{item.title}</div>
+                    <div className="text-sm text-gray-400">{item.description}</div>
                   </div>
                 </div>
               </CommandItem>

@@ -24,10 +24,10 @@ export default function DashboardLayout({
 
   if (isPending) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-violet-950 via-purple-950 to-slate-950 flex items-center justify-center">
         <div className="relative">
-          <div className="w-8 h-8 border-2 border-blue-200 rounded-full animate-spin"></div>
-          <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin absolute top-0"></div>
+          <div className="w-8 h-8 border-2 border-violet-500/30 rounded-full animate-spin"></div>
+          <div className="w-8 h-8 border-2 border-violet-500 border-t-transparent rounded-full animate-spin absolute top-0"></div>
         </div>
       </div>
     );
@@ -39,7 +39,7 @@ export default function DashboardLayout({
 
   return (
     <SidebarProvider defaultOpen={true}>
-      <div className="flex min-h-screen w-full bg-gray-50/50">
+      <div className="flex min-h-screen w-full bg-slate-950/50">
         <DashboardSidebar />
         <SidebarInset className="flex flex-1 flex-col min-w-0">
           <DashboardNavbar />

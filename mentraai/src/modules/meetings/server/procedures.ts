@@ -1,0 +1,385 @@
+import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
+import { TRPCError } from "@trpc/server";
+import { db } from "@/db";
+import { meetings, agents } from "@/db/schema";
+import { eq, and, ilike, count, gte, lte } from "drizzle-orm";
+import { z } from "zod";
+import { streamVideo } from "@/lib/stream-video";
+import { generateAvatarUri } from "@/lib/avatar";
+import { meetingsInsertSchema, meetingsUpdateSchema, meetingsQuerySchema } from "../schema";
+
+export const meetingsRouter = createTRPCRouter({
+    generateToken: protectedProcedure
+        .input(z.object({ meetingId: z.string() }))
+        .mutation(async ({ input, ctx }) => {
+            const user = ctx.auth.user;
+            const expirationTime = Math.floor(Date.now() / 1000) + 60 * 60;
+            const issuedAt = Math.floor(Date.now() / 1000) - 60;
+
+            const userImage = user.image || generateAvatarUri({ 
+                seed: user.name || user.email, 
+                variant: 'initials' 
+            });
+
+            await streamVideo.upsertUsers([{
+                id: user.id,
+                name: user.name || user.email,
+                role: 'admin',
+                image: userImage,
+            }]);
+
+            const token = streamVideo.generateUserToken({
+                user_id: user.id,
+                validity_in_seconds: 3600,
+                iat: issuedAt,
+                exp: expirationTime,
+            });
+
+            return { token };
+        }),
+
+    getMany: protectedProcedure
+        .input(meetingsQuerySchema)
+        .query(async ({ input, ctx }) => {
+            const { page, pageSize, search, status, agentId } = input;
+            const offset = (page - 1) * pageSize;
+
+            const whereConditions = [eq(meetings.userId, ctx.auth.user.id)];
+            
+            if (search) {
+                whereConditions.push(ilike(meetings.name, `%${search}%`));
+            }
+
+            if (status) {
+                whereConditions.push(eq(meetings.status, status as any));
+            }
+
+            if (agentId) {
+                whereConditions.push(eq(meetings.agentId, agentId));
+            }
+
+            const [meetingsList, totalCount] = await Promise.all([
+                db
+                    .select({
+                        id: meetings.id,
+                        name: meetings.name,
+                        status: meetings.status,
+                        instructions: meetings.instructions,
+                        startedAt: meetings.startedAt,
+                        endedAt: meetings.endedAt,
+                        transcriptUrl: meetings.transcriptUrl,
+                        recordingUrl: meetings.recordingUrl,
+                        summary: meetings.summary,
+                        scheduledStartTime: meetings.scheduledStartTime,
+                        createdAt: meetings.createdAt,
+                        updatedAt: meetings.updatedAt,
+                        agentId: meetings.agentId,
+                        agentName: agents.name,
+                    })
+                    .from(meetings)
+                    .leftJoin(agents, eq(meetings.agentId, agents.id))
+                    .where(and(...whereConditions))
+                    .limit(pageSize)
+                    .offset(offset)
+                    .orderBy(meetings.createdAt),
+                db
+                    .select({ count: count() })
+                    .from(meetings)
+                    .where(and(...whereConditions))
+                    .then(result => result[0]?.count ?? 0)
+            ]);
+
+            const meetingsWithDuration = meetingsList.map(meeting => {
+                let duration = null;
+                if (meeting.startedAt && meeting.endedAt) {
+                    duration = new Date(meeting.endedAt).getTime() - new Date(meeting.startedAt).getTime();
+                }
+                return {
+                    ...meeting,
+                    duration,
+                };
+            });
+
+            const totalPages = Math.ceil(totalCount / pageSize);
+
+            return {
+                meetings: meetingsWithDuration,
+                pagination: {
+                    page,
+                    pageSize,
+                    total: totalCount,
+                    totalPages,
+                },
+            };
+        }),
+
+    getCalendarEvents: protectedProcedure
+        .input(z.object({
+            startDate: z.date(),
+            endDate: z.date(),
+            showCompleted: z.boolean().default(false),
+        }))
+        .query(async ({ input, ctx }) => {
+            const { startDate, endDate, showCompleted } = input;
+            
+            const whereConditions = [
+                eq(meetings.userId, ctx.auth.user.id),
+                gte(meetings.scheduledStartTime, startDate),
+                lte(meetings.scheduledStartTime, endDate),
+            ];
+
+            if (!showCompleted) {
+                whereConditions.push(eq(meetings.status, 'upcoming' as any));
+            } else {
+                whereConditions.push(eq(meetings.status, 'completed' as any));
+            }
+
+            const meetingsList = await db
+                .select({
+                    id: meetings.id,
+                    name: meetings.name,
+                    status: meetings.status,
+                    instructions: meetings.instructions,
+                    scheduledStartTime: meetings.scheduledStartTime,
+                    agentId: meetings.agentId,
+                    agentName: agents.name,
+                })
+                .from(meetings)
+                .leftJoin(agents, eq(meetings.agentId, agents.id))
+                .where(and(...whereConditions))
+                .orderBy(meetings.scheduledStartTime);
+
+            return meetingsList.map(meeting => ({
+                id: meeting.id,
+                title: meeting.name,
+                description: meeting.instructions,
+                startTime: meeting.scheduledStartTime,
+                endTime: meeting.scheduledStartTime ? new Date(new Date(meeting.scheduledStartTime).getTime() + 60 * 60 * 1000) : null,
+                type: 'meeting' as const,
+                status: meeting.status,
+                meetingId: meeting.id,
+                agentName: meeting.agentName,
+            }));
+        }),
+
+    getOne: protectedProcedure
+        .input(z.object({ id: z.string() }))
+        .query(async ({ input, ctx }) => {
+            const meeting = await db
+                .select({
+                    id: meetings.id,
+                    name: meetings.name,
+                    status: meetings.status,
+                    instructions: meetings.instructions,
+                    startedAt: meetings.startedAt,
+                    endedAt: meetings.endedAt,
+                    transcriptUrl: meetings.transcriptUrl,
+                    recordingUrl: meetings.recordingUrl,
+                    summary: meetings.summary,
+                    scheduledStartTime: meetings.scheduledStartTime,
+                    createdAt: meetings.createdAt,
+                    updatedAt: meetings.updatedAt,
+                    agentId: meetings.agentId,
+                    agentName: agents.name,
+                })
+                .from(meetings)
+                .leftJoin(agents, eq(meetings.agentId, agents.id))
+                .where(and(eq(meetings.id, input.id), eq(meetings.userId, ctx.auth.user.id)))
+                .limit(1);
+
+            if (!meeting.length) {
+                throw new TRPCError({
+                    code: 'NOT_FOUND',
+                    message: 'Meeting not found',
+                });
+            }
+
+            const meetingData = meeting[0];
+            let duration = null;
+            if (meetingData.startedAt && meetingData.endedAt) {
+                duration = new Date(meetingData.endedAt).getTime() - new Date(meetingData.startedAt).getTime();
+            }
+
+            return {
+                ...meetingData,
+                duration,
+            };
+        }),
+
+    create: protectedProcedure
+    .input(meetingsInsertSchema)
+    .mutation(async ({ input, ctx }) => {
+        const agent = await db
+            .select()
+            .from(agents)
+            .where(and(eq(agents.id, input.agentId), eq(agents.userId, ctx.auth.user.id)))
+            .limit(1);
+
+        if (!agent.length) {
+            throw new TRPCError({
+                code: 'NOT_FOUND',
+                message: 'Agent not found',
+            });
+        }
+        const agentInstructions = agent[0].instructions;
+
+        const scheduledStartTime = input.startNow 
+            ? new Date() 
+            : input.scheduledStartTime || new Date();
+
+        const [createdMeeting] = await db
+            .insert(meetings)
+            .values({
+                name: input.name,
+                agentId: input.agentId,
+                instructions: agentInstructions, 
+                scheduledStartTime,
+                userId: ctx.auth.user.id,
+            })
+            .returning();
+
+        try {
+            const call = streamVideo.video.call('default', createdMeeting.id);
+            
+            await call.create({
+                data: {
+                    created_by_id: ctx.auth.user.id,
+                    custom: {
+                        meetingId: createdMeeting.id,
+                        meetingName: createdMeeting.name,
+                        instructions: agentInstructions,
+                    },
+                    settings_override: {
+                        transcription: {
+                            language: 'en',
+                            mode: 'auto-on', 
+                            closed_caption_mode: 'auto-on',
+                        },
+                        recording: {
+                            quality: '1080p',
+                            mode: 'auto-on',
+                        },
+                        audio: {
+                            mic_default_on: true,
+                            speaker_default_on: true,
+                            opus_dtx_enabled: false,
+                            default_device: 'speaker',
+                            access_request_enabled: false, 
+                        },
+                        ring: {
+                            auto_cancel_timeout_ms: 30000,
+                            incoming_call_timeout_ms: 30000,
+                        },
+                        backstage: {
+                            enabled: false, 
+                        },
+                    },
+                },
+            });
+
+            const agentData = agent[0];
+            const agentImage = generateAvatarUri({ 
+                seed: agentData.name, 
+                variant: 'botttsNeutral' 
+            });
+
+            await streamVideo.upsertUsers([{
+                id: agentData.id,
+                name: agentData.name,
+                role: 'user', 
+                image: agentImage,
+                custom: {
+                    type: 'ai_agent', 
+                },
+            }]);
+
+            console.log(`[MEETING CREATED] Meeting ${createdMeeting.id} created successfully`);
+            console.log(`[MEETING CREATED] Agent ${agentData.id} configured`);
+
+        } catch (error) {
+            console.error('[MEETING CREATION ERROR] Failed to create stream call:', error);
+            // Delete the meeting if call creation fails
+            await db.delete(meetings).where(eq(meetings.id, createdMeeting.id));
+            throw new TRPCError({
+                code: 'INTERNAL_SERVER_ERROR',
+                message: 'Failed to create video call. Please try again.',
+            });
+        }
+
+        return { ...createdMeeting, startNow: input.startNow };
+    }),
+
+    update: protectedProcedure
+        .input(z.object({
+            id: z.string(),
+            data: meetingsUpdateSchema,
+        }))
+        .mutation(async ({ input, ctx }) => {
+            const existingMeeting = await db
+                .select()
+                .from(meetings)
+                .where(and(eq(meetings.id, input.id), eq(meetings.userId, ctx.auth.user.id)))
+                .limit(1);
+
+            if (!existingMeeting.length) {
+                throw new TRPCError({
+                    code: 'NOT_FOUND',
+                    message: 'Meeting not found',
+                });
+            }
+
+            if (input.data.agentId) {
+                const agent = await db
+                    .select()
+                    .from(agents)
+                    .where(and(eq(agents.id, input.data.agentId), eq(agents.userId, ctx.auth.user.id)))
+                    .limit(1);
+
+                if (!agent.length) {
+                    throw new TRPCError({
+                        code: 'NOT_FOUND',
+                        message: 'Agent not found',
+                    });
+                }
+            }
+
+            const updateData: any = {
+                updatedAt: new Date(),
+            };
+
+            if (input.data.name) updateData.name = input.data.name;
+            if (input.data.agentId) updateData.agentId = input.data.agentId;
+            if (input.data.scheduledStartTime) updateData.scheduledStartTime = input.data.scheduledStartTime;
+
+            const [updatedMeeting] = await db
+                .update(meetings)
+                .set(updateData)
+                .where(eq(meetings.id, input.id))
+                .returning();
+
+            return updatedMeeting;
+        }),
+
+    remove: protectedProcedure
+        .input(z.object({ id: z.string() }))
+        .mutation(async ({ input, ctx }) => {
+            const existingMeeting = await db
+                .select()
+                .from(meetings)
+                .where(and(eq(meetings.id, input.id), eq(meetings.userId, ctx.auth.user.id)))
+                .limit(1);
+
+            if (!existingMeeting.length) {
+                throw new TRPCError({
+                    code: 'NOT_FOUND',
+                    message: 'Meeting not found',
+                });
+            }
+
+            await db
+                .delete(meetings)
+                .where(eq(meetings.id, input.id));
+
+            return { success: true };
+        }),
+});

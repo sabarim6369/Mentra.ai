@@ -126,7 +126,7 @@ export function DashboardSidebar() {
             </SidebarGroupContent>
           </SidebarGroup>
 
-          <SidebarSeparator className="mx-3 my-4 bg-violet-500/20" />
+          {/* <SidebarSeparator className="mx-3 my-4 bg-violet-500/20" />
 
           <SidebarGroup className="px-3">
             <SidebarGroupLabel className="group-data-[collapsible=icon]:hidden text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 px-2">
@@ -166,7 +166,7 @@ export function DashboardSidebar() {
                 })}
               </SidebarMenu>
             </SidebarGroupContent>
-          </SidebarGroup>
+          </SidebarGroup> */}
         </SidebarContent>
 
         <SidebarFooter className="border-t border-violet-500/20 p-3">

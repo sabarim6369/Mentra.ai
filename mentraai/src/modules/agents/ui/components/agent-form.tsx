@@ -49,16 +49,16 @@ export function AgentForm({
   };
 
   return (
-    <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
+    <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
       {error && (
         <Alert className="border-red-200 bg-red-50">
           <AlertDescription className="text-red-800">{error}</AlertDescription>
         </Alert>
       )}
 
-      <div className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="name" className="text-gray-700 font-medium">
+      <div className="space-y-3">
+        <div className="space-y-1">
+          <Label htmlFor="name" className="text-gray-700 font-medium text-sm">
             Agent Name
           </Label>
           <div className="relative">
@@ -66,17 +66,17 @@ export function AgentForm({
             <Input
               id="name"
               placeholder="Enter agent name (e.g., Sales Assistant)"
-              className="pl-10"
+              className="pl-10 h-9"
               {...register("name")}
             />
           </div>
           {errors.name && (
-            <p className="text-sm text-red-600">{errors.name.message}</p>
+            <p className="text-xs text-red-600">{errors.name.message}</p>
           )}
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="instructions" className="text-gray-700 font-medium">
+        <div className="space-y-1">
+          <Label htmlFor="instructions" className="text-gray-700 font-medium text-sm">
             Instructions
           </Label>
           <div className="relative">
@@ -84,12 +84,12 @@ export function AgentForm({
             <Textarea
               id="instructions"
               placeholder="Describe what this agent should do, its personality, and any specific guidelines..."
-              className="pl-10 min-h-32 resize-none"
+              className="pl-10 min-h-20 max-h-32 resize-y"
               {...register("instructions")}
             />
           </div>
           {errors.instructions && (
-            <p className="text-sm text-red-600">{errors.instructions.message}</p>
+            <p className="text-xs text-red-600">{errors.instructions.message}</p>
           )}
           <p className="text-xs text-gray-500">
             Provide clear instructions to help your agent understand its role and responsibilities.
@@ -100,7 +100,7 @@ export function AgentForm({
       <Button
         type="submit"
         disabled={isLoading}
-        className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+        className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 h-9"
       >
         {isLoading ? (
           <div className="flex items-center">

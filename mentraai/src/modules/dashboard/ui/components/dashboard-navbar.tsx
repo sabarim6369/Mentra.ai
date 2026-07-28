@@ -31,15 +31,20 @@ export function DashboardNavbar() {
       url: '/dashboard/agents',
     },
     { 
-      title: 'Upgrade', 
-      description: 'Upgrade your plan',
-      url: '/dashboard/upgrade',
+      title: 'Calendar', 
+      description: 'View your calendar',
+      url: '/dashboard/calendar',
     },
-    { 
-      title: 'Billing', 
-      description: 'Manage billing and payments',
-      url: '/dashboard/billing',
-    },
+    // { 
+    //   title: 'Upgrade', 
+    //   description: 'Upgrade your plan',
+    //   url: '/dashboard/upgrade',
+    // },
+    // { 
+    //   title: 'Billing', 
+    //   description: 'Manage billing and payments',
+    //   url: '/dashboard/billing',
+    // },
   ];
 
   useEffect(() => {

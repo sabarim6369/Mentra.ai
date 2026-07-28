@@ -14,17 +14,19 @@ interface CallUIProps {
 
 export const CallUI = ({ meetingName }: CallUIProps) => {
   const [show, setShow] = useState<ShowState>('lobby');
+  const [hasMic, setHasMic] = useState(false);
   const call = useCall();
   const isJoiningRef = useRef(false);
   const isLeavingRef = useRef(false);
 
-  const handleJoin = async () => {
+  const handleJoin = async (hasMicrophone: boolean) => {
     if (!call || isJoiningRef.current) {
       console.log('[UI] Cannot join - already joining or no call');
       return;
     }
     
     isJoiningRef.current = true;
+    setHasMic(hasMicrophone);
     
     try {
       console.log('[UI] Joining call...');
@@ -53,8 +55,12 @@ export const CallUI = ({ meetingName }: CallUIProps) => {
       if (call.camera.state.status === 'enabled') {
         await call.camera.disable();
       }
-      if (call.microphone.state.status === 'enabled') {
-        await call.microphone.disable();
+      try {
+        if (call.microphone.state.status === 'enabled') {
+          await call.microphone.disable();
+        }
+      } catch (micError) {
+        console.warn('[UI] Microphone disable failed (no device?):', micError);
       }
 
       // Leave the call
@@ -87,7 +93,8 @@ export const CallUI = ({ meetingName }: CallUIProps) => {
         {show === 'call' && (
           <CallActive 
             onLeave={handleLeave} 
-            meetingName={meetingName} 
+            meetingName={meetingName}
+            hasMic={hasMic}
           />
         )}
         

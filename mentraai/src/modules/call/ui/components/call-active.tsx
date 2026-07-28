@@ -11,9 +11,10 @@ import {
 interface CallActiveProps {
   onLeave: () => void;
   meetingName: string;
+  hasMic: boolean;
 }
 
-export const CallActive = ({ onLeave, meetingName }: CallActiveProps) => {
+export const CallActive = ({ onLeave, meetingName, hasMic }: CallActiveProps) => {
   const call = useCall();
   const isLeavingRef = useRef(false);
 
@@ -59,7 +60,11 @@ export const CallActive = ({ onLeave, meetingName }: CallActiveProps) => {
       await call.camera.disable();
       
       console.log('[CALL] Stopping microphone...');
-      await call.microphone.disable();
+      try {
+        await call.microphone.disable();
+      } catch (micError) {
+        console.warn('[CALL] Microphone disable failed (no device?):', micError);
+      }
 
       // Leave the call
       if (call.state.callingState !== CallingState.LEFT) {

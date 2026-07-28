@@ -12,7 +12,7 @@ import { authClient } from '@/lib/auth-client';
 import { generateAvatarUri } from '@/lib/avatar';
 
 interface CallLobbyProps {
-  onJoin: () => void;
+  onJoin: (hasMic: boolean) => void;
 }
 
 export const CallLobby = ({ onJoin }: CallLobbyProps) => {
@@ -23,20 +23,54 @@ export const CallLobby = ({ onJoin }: CallLobbyProps) => {
   const { microphone, isMute: isMicMute } = useMicrophoneState();
   const [permissionsGranted, setPermissionsGranted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [deviceError, setDeviceError] = useState<string | null>(null);
+  const [hasDevices, setHasDevices] = useState<{ video: boolean; audio: boolean }>({ video: false, audio: false });
 
-  useEffect(() => {
-    const requestPermissions = async () => {
-      try {
-        await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-        setPermissionsGranted(true);
-      } catch (error) {
-        console.error('Failed to get media permissions:', error);
-        setPermissionsGranted(false);
+  const checkDevices = async () => {
+    try {
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const videoDevices = devices.filter(d => d.kind === 'videoinput');
+      const audioDevices = devices.filter(d => d.kind === 'audioinput');
+      setHasDevices({ video: videoDevices.length > 0, audio: audioDevices.length > 0 });
+      console.log('[DEVICES] Video devices:', videoDevices.length, 'Audio devices:', audioDevices.length);
+      return { video: videoDevices.length > 0, audio: audioDevices.length > 0 };
+    } catch (error) {
+      console.error('[DEVICES] Failed to enumerate devices:', error);
+      return { video: false, audio: false };
+    }
+  };
+
+  const requestPermissions = async () => {
+    try {
+      setDeviceError(null);
+      const devices = await checkDevices();
+      
+      if (!devices.video && !devices.audio) {
+        setDeviceError('No camera or microphone devices found on your system');
+        return;
       }
-    };
 
-    requestPermissions();
-  }, []);
+      // Try to request permissions for available devices
+      const constraints: MediaStreamConstraints = {};
+      if (devices.video) constraints.video = true;
+      if (devices.audio) constraints.audio = true;
+
+      await navigator.mediaDevices.getUserMedia(constraints);
+      setPermissionsGranted(true);
+    } catch (error: any) {
+      console.error('Failed to get media permissions:', error);
+      setPermissionsGranted(false);
+      
+      if (error.name === 'NotFoundError') {
+        setDeviceError('No camera or microphone found. Please connect a device or continue without media.');
+      } else if (error.name === 'NotAllowedError') {
+        setDeviceError('Permission denied. Please allow camera/microphone access in your browser settings.');
+      } else {
+        setDeviceError(`Failed to access devices: ${error.message}`);
+      }
+      throw error;
+    }
+  };
 
   const userImage = session?.user.image || generateAvatarUri({
     seed: session?.user.name || 'User',
@@ -50,7 +84,7 @@ export const CallLobby = ({ onJoin }: CallLobbyProps) => {
   const handleJoin = async () => {
     setIsLoading(true);
     try {
-      await onJoin();
+      await onJoin(hasDevices.audio);
     } catch (error) {
       console.error('Failed to join call:', error);
       setIsLoading(false);
@@ -162,15 +196,46 @@ export const CallLobby = ({ onJoin }: CallLobbyProps) => {
                   <h3 className="text-lg font-semibold">Device Settings</h3>
                 </div>
                 
-                {!permissionsGranted && (
-                  <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4 mb-6">
-                    <p className="text-amber-200 text-sm font-medium">
-                      📹 Camera and microphone access required
+                {deviceError && (
+                  <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4 mb-6">
+                    <p className="text-red-200 text-sm font-medium mb-2">
+                      ⚠️ Device Error
                     </p>
-                    <p className="text-amber-300/80 text-xs mt-1">
-                      Please allow permissions to join the meeting
+                    <p className="text-red-300/80 text-xs mb-3">
+                      {deviceError}
                     </p>
                   </div>
+                )}
+
+                {!permissionsGranted && !deviceError && (
+                  <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4 mb-6">
+                    <p className="text-amber-200 text-sm font-medium mb-2">
+                      📹 Camera and microphone access required
+                    </p>
+                    <p className="text-amber-300/80 text-xs mb-3">
+                      Please allow permissions to join the meeting
+                    </p>
+                    <Button
+                      onClick={requestPermissions}
+                      className="w-full bg-amber-600 hover:bg-amber-700 text-white"
+                      size="sm"
+                    >
+                      Request Permissions
+                    </Button>
+                  </div>
+                )}
+
+                {deviceError && (
+                  <Button
+                    onClick={() => {
+                      setPermissionsGranted(true);
+                      setDeviceError(null);
+                    }}
+                    className="w-full bg-gray-600 hover:bg-gray-700 text-white"
+                    size="sm"
+                  >
+                    Continue Without Media
+                  </Button>
                 )}
 
                 <div className="space-y-4">

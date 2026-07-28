@@ -96,9 +96,16 @@ export const CallConnect = ({
         const _call = client.call('default', meetingId);
         
         // Disable camera and microphone by default
-        console.log('[CONNECT] Disabling camera and mic by default');
+        console.log('[CONNECT] Disabling camera by default');
         await _call.camera.disable();
-        await _call.microphone.disable();
+        
+        console.log('[CONNECT] Disabling microphone by default');
+        try {
+          await _call.microphone.disable();
+        } catch (micError) {
+          console.warn('[CONNECT] Microphone disable failed (no device?):', micError);
+          // Continue without microphone - this is expected if no device exists
+        }
         
         console.log('[CONNECT] Call initialized');
         setCall(_call);
@@ -122,8 +129,12 @@ export const CallConnect = ({
             if (call.camera.state.status === 'enabled') {
               await call.camera.disable();
             }
-            if (call.microphone.state.status === 'enabled') {
-              await call.microphone.disable();
+            try {
+              if (call.microphone.state.status === 'enabled') {
+                await call.microphone.disable();
+              }
+            } catch (micError) {
+              console.warn('[CONNECT] Microphone cleanup failed (no device?):', micError);
             }
 
             // Leave call if still in it

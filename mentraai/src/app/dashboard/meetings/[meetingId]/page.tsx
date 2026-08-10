@@ -13,22 +13,22 @@ function MeetingDetailLoading() {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div className="space-y-2">
-          <div className="h-8 bg-gray-200 rounded w-48 animate-pulse" />
-          <div className="h-4 bg-gray-200 rounded w-32 animate-pulse" />
+          <div className="h-8 bg-slate-800/50 rounded w-48 animate-pulse" />
+          <div className="h-4 bg-slate-800/50 rounded w-32 animate-pulse" />
         </div>
         <div className="flex space-x-2">
-          <div className="h-10 bg-gray-200 rounded w-20 animate-pulse" />
-          <div className="h-10 bg-gray-200 rounded w-24 animate-pulse" />
+          <div className="h-10 bg-slate-800/50 rounded w-20 animate-pulse" />
+          <div className="h-10 bg-slate-800/50 rounded w-24 animate-pulse" />
         </div>
       </div>
-      
-      <div className="bg-white rounded-xl p-6 border border-gray-100 space-y-6">
+
+      <div className="bg-slate-900/50 rounded-xl p-6 border border-slate-800/50 space-y-6">
         <div className="space-y-4">
-          <div className="h-6 bg-gray-200 rounded w-32 animate-pulse" />
+          <div className="h-6 bg-slate-800/50 rounded w-32 animate-pulse" />
           <div className="space-y-2">
-            <div className="h-4 bg-gray-200 rounded animate-pulse" />
-            <div className="h-4 bg-gray-200 rounded w-5/6 animate-pulse" />
-            <div className="h-4 bg-gray-200 rounded w-4/6 animate-pulse" />
+            <div className="h-4 bg-slate-800/50 rounded animate-pulse" />
+            <div className="h-4 bg-slate-800/50 rounded w-5/6 animate-pulse" />
+            <div className="h-4 bg-slate-800/50 rounded w-4/6 animate-pulse" />
           </div>
         </div>
       </div>

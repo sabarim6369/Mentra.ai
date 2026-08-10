@@ -28,11 +28,11 @@ interface TranscriptItem {
 }
 
 const statusColors = {
-  upcoming: { bg: 'bg-blue-50', text: 'text-blue-700', border: 'border-blue-200', icon: Calendar },
-  active: { bg: 'bg-green-50', text: 'text-green-700', border: 'border-green-200', icon: Play },
-  completed: { bg: 'bg-gray-50', text: 'text-gray-700', border: 'border-gray-200', icon: Square },
-  cancelled: { bg: 'bg-red-50', text: 'text-red-700', border: 'border-red-200', icon: X },
-  processing: { bg: 'bg-yellow-50', text: 'text-yellow-700', border: 'border-yellow-200', icon: Clock },
+  upcoming: { bg: 'bg-blue-950/30', text: 'text-blue-400', border: 'border-blue-800/50', icon: Calendar },
+  active: { bg: 'bg-green-950/30', text: 'text-green-400', border: 'border-green-800/50', icon: Play },
+  completed: { bg: 'bg-gray-800/30', text: 'text-gray-400', border: 'border-gray-700/50', icon: Square },
+  cancelled: { bg: 'bg-red-950/30', text: 'text-red-400', border: 'border-red-800/50', icon: X },
+  processing: { bg: 'bg-yellow-950/30', text: 'text-yellow-400', border: 'border-yellow-800/50', icon: Clock },
 };
 
 const statusLabels = {
@@ -92,8 +92,8 @@ const TranscriptModal = ({ isOpen, onClose, transcriptUrl }: { isOpen: boolean; 
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-5xl max-h-[85vh] flex flex-col bg-gradient-to-br from-slate-50 via-white to-blue-50 border-0 shadow-2xl">
-        <DialogHeader className="bg-gradient-to-r from-blue-600 to-indigo-600 -mx-6 -mt-6 px-6 py-4 rounded-t-lg">
+      <DialogContent className="max-w-5xl max-h-[85vh] flex flex-col bg-gradient-to-br from-slate-900 via-slate-950 to-purple-950/30 border-slate-800/50 shadow-2xl">
+        <DialogHeader className="bg-gradient-to-r from-violet-600 to-purple-600 -mx-6 -mt-6 px-6 py-4 rounded-t-lg">
           <DialogTitle className="flex items-center space-x-3 text-white text-lg">
             <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
               <FileText className="w-5 h-5" />
@@ -101,34 +101,34 @@ const TranscriptModal = ({ isOpen, onClose, transcriptUrl }: { isOpen: boolean; 
             <span className="font-semibold">Meeting Transcript</span>
           </DialogTitle>
         </DialogHeader>
-        
+
         <div className="flex-1 overflow-hidden px-2 py-4">
           {loading ? (
             <div className="flex flex-col items-center justify-center py-16 space-y-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-full flex items-center justify-center">
+              <div className="w-12 h-12 bg-gradient-to-br from-violet-500 to-purple-500 rounded-full flex items-center justify-center">
                 <Loader2 className="w-6 h-6 animate-spin text-white" />
               </div>
               <div className="text-center">
-                <p className="text-lg font-medium text-gray-700">Loading transcript...</p>
+                <p className="text-lg font-medium text-gray-300">Loading transcript...</p>
                 <p className="text-sm text-gray-500 mt-1">Please wait while we fetch the conversation</p>
               </div>
             </div>
           ) : error ? (
             <div className="flex flex-col items-center justify-center py-16 space-y-4">
-              <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
-                <X className="w-6 h-6 text-red-500" />
+              <div className="w-12 h-12 bg-red-950/30 rounded-full flex items-center justify-center">
+                <X className="w-6 h-6 text-red-400" />
               </div>
               <div className="text-center">
-                <p className="text-lg font-medium text-red-700">{error}</p>
+                <p className="text-lg font-medium text-red-400">{error}</p>
                 <p className="text-sm text-red-500 mt-1">Unable to load the transcript data</p>
               </div>
             </div>
           ) : (
-            <div className="h-full bg-white/50 rounded-xl border border-white/60 backdrop-blur-sm shadow-inner">
-              <div className="h-full overflow-y-auto p-6 space-y-6 scrollbar-thin scrollbar-thumb-blue-200 scrollbar-track-transparent">
+            <div className="h-full bg-slate-900/50 rounded-xl border border-slate-800/50 backdrop-blur-sm shadow-inner">
+              <div className="h-full overflow-y-auto p-6 space-y-6 scrollbar-thin scrollbar-thumb-violet-600/50 scrollbar-track-transparent">
                 {transcriptData.map((item, index) => {
                   const isUser = index % 2 === 0;
-                  
+
                   return (
                     <div
                       key={`${item.speaker_id}-${index}`}
@@ -136,31 +136,31 @@ const TranscriptModal = ({ isOpen, onClose, transcriptUrl }: { isOpen: boolean; 
                     >
                       <div className={`flex ${isUser ? 'flex-row-reverse' : 'flex-row'} items-end space-x-3 max-w-[80%] group`}>
                         <div className={`w-10 h-10 rounded-full flex items-center justify-center shadow-md transition-transform group-hover:scale-110 ${
-                          isUser 
-                            ? 'bg-gradient-to-br from-blue-500 to-blue-600' 
+                          isUser
+                            ? 'bg-gradient-to-br from-violet-500 to-purple-600'
                             : 'bg-gradient-to-br from-emerald-500 to-green-600'
                         }`}>
                           {isUser ? <User className="w-5 h-5 text-white" /> : <Bot className="w-5 h-5 text-white" />}
                         </div>
-                        
+
                         <div className={`flex flex-col ${isUser ? 'items-end' : 'items-start'} space-y-1`}>
                           <div className={`relative px-5 py-3 rounded-2xl shadow-sm max-w-lg transition-all duration-200 hover:shadow-md ${
-                            isUser 
-                              ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-br-sm' 
-                              : 'bg-white text-gray-800 rounded-bl-sm border border-gray-100'
+                            isUser
+                              ? 'bg-gradient-to-br from-violet-500 to-purple-600 text-white rounded-br-sm'
+                              : 'bg-slate-800/50 text-gray-200 rounded-bl-sm border border-slate-700/50'
                           }`}>
-                            <p className={`text-sm leading-relaxed ${isUser ? 'text-white' : 'text-gray-800'}`}>
+                            <p className={`text-sm leading-relaxed ${isUser ? 'text-white' : 'text-gray-200'}`}>
                               {item.text}
                             </p>
                             {isUser && (
-                              <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-blue-600 rotate-45 rounded-sm"></div>
+                              <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-purple-600 rotate-45 rounded-sm"></div>
                             )}
                             {!isUser && (
-                              <div className="absolute -bottom-1 -left-1 w-3 h-3 bg-white border-l border-b border-gray-100 rotate-45 rounded-sm"></div>
+                              <div className="absolute -bottom-1 -left-1 w-3 h-3 bg-slate-800 border-l border-b border-slate-700/50 rotate-45 rounded-sm"></div>
                             )}
                           </div>
-                          
-                          <div className={`text-xs text-gray-400 px-2 opacity-0 group-hover:opacity-100 transition-opacity ${
+
+                          <div className={`text-xs text-gray-500 px-2 opacity-0 group-hover:opacity-100 transition-opacity ${
                             isUser ? 'text-right' : 'text-left'
                           }`}>
                             {formatTime(item.start_ts)} - {formatTime(item.stop_ts)}
@@ -170,7 +170,7 @@ const TranscriptModal = ({ isOpen, onClose, transcriptUrl }: { isOpen: boolean; 
                     </div>
                   );
                 })}
-                
+
                 {transcriptData.length === 0 && !loading && !error && (
                   <div className="flex flex-col items-center justify-center py-16 text-gray-500">
                     <FileText className="w-16 h-16 mb-4 opacity-50" />
@@ -181,15 +181,15 @@ const TranscriptModal = ({ isOpen, onClose, transcriptUrl }: { isOpen: boolean; 
             </div>
           )}
         </div>
-        
+
         <div className="flex justify-between items-center pt-4 px-2">
           <div className="text-sm text-gray-500">
             {transcriptData.length > 0 && `${transcriptData.length} messages`}
           </div>
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             onClick={onClose}
-            className="bg-white hover:bg-gray-50 border-gray-200 px-6"
+            className="bg-slate-800/50 hover:bg-slate-700/50 border-slate-700/50 text-gray-300 px-6"
           >
             <X className="w-4 h-4 mr-2" />
             Close
@@ -291,10 +291,10 @@ export const MeetingDetailView = ({ meetingId }: MeetingDetailViewProps) => {
 
   if (!meeting) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/40 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-purple-950/30 to-slate-950 flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-blue-600" />
-          <p className="text-gray-600">Loading meeting details...</p>
+          <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-violet-500" />
+          <p className="text-gray-400">Loading meeting details...</p>
         </div>
       </div>
     );
@@ -309,52 +309,52 @@ export const MeetingDetailView = ({ meetingId }: MeetingDetailViewProps) => {
   const scheduledTime = formatScheduledTime(meeting.scheduledStartTime);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/40">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-purple-950/20 to-slate-950">
       <div className="p-8 space-y-8 max-w-7xl mx-auto">
-        <div className="flex items-center justify-between bg-white/70 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/50">
+        <div className="flex items-center justify-between bg-slate-900/50 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-slate-800/50">
           <div className="flex items-center space-x-6">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => router.push("/dashboard/meetings")}
-              className="hover:bg-white/80 transition-all duration-200 rounded-xl px-4 py-2"
+              className="hover:bg-slate-800/50 transition-all duration-200 rounded-xl px-4 py-2 text-gray-300"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Meetings
             </Button>
-            <div className="w-px h-8 bg-gradient-to-b from-transparent via-gray-300 to-transparent" />
+            <div className="w-px h-8 bg-gradient-to-b from-transparent via-slate-700 to-transparent" />
             <div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-200 to-gray-400 bg-clip-text text-transparent">
                 {meeting.name}
               </h1>
               <div className="flex items-center space-x-3 mt-2">
-                <Badge 
-                  variant="secondary" 
+                <Badge
+                  variant="secondary"
                   className={`text-xs px-3 py-1 ${statusColor.bg} ${statusColor.text} ${statusColor.border} border-2 flex items-center space-x-2 shadow-sm`}
                 >
                   <StatusIcon className="w-3 h-3" />
                   <span className="font-medium">{statusLabels[meeting.status as keyof typeof statusLabels] || 'Unknown'}</span>
                 </Badge>
                 {meeting.duration && (
-                  <Badge variant="outline" className="text-xs px-3 py-1 bg-white/80 border-gray-200 shadow-sm">
+                  <Badge variant="outline" className="text-xs px-3 py-1 bg-slate-800/50 border-slate-700/50 shadow-sm text-gray-300">
                     <Clock className="w-3 h-3 mr-1" />
                     {formatDuration(meeting.duration)}
                   </Badge>
                 )}
-                <Badge variant="outline" className="text-xs px-3 py-1 bg-white/80 border-gray-200 shadow-sm">
+                <Badge variant="outline" className="text-xs px-3 py-1 bg-slate-800/50 border-slate-700/50 shadow-sm text-gray-300">
                   <Calendar className="w-3 h-3 mr-1" />
                   {new Date(meeting.createdAt).toLocaleDateString()}
                 </Badge>
               </div>
             </div>
           </div>
-          
+
           <div className="flex space-x-3">
             <Button
               variant="outline"
               size="sm"
               onClick={() => setIsEditDialogOpen(true)}
-              className="hover:bg-blue-50 hover:border-blue-300 transition-all duration-200 bg-white/80 shadow-sm px-4 py-2"
+              className="hover:bg-slate-800/50 hover:border-slate-600 transition-all duration-200 bg-slate-800/30 shadow-sm px-4 py-2 text-gray-300 border-slate-700/50"
             >
               <Edit className="w-4 h-4 mr-2" />
               Edit
@@ -363,7 +363,7 @@ export const MeetingDetailView = ({ meetingId }: MeetingDetailViewProps) => {
               variant="outline"
               size="sm"
               onClick={() => setIsDeleteDialogOpen(true)}
-              className="hover:bg-red-50 hover:border-red-300 hover:text-red-600 transition-all duration-200 bg-white/80 shadow-sm px-4 py-2"
+              className="hover:bg-red-950/30 hover:border-red-800/50 hover:text-red-400 transition-all duration-200 bg-slate-800/30 shadow-sm px-4 py-2 text-gray-300 border-slate-700/50"
             >
               <Trash2 className="w-4 h-4 mr-2" />
               Delete
@@ -373,17 +373,17 @@ export const MeetingDetailView = ({ meetingId }: MeetingDetailViewProps) => {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-8">
-            <Card className="bg-white/70 backdrop-blur-sm border-white/50 shadow-xl rounded-2xl overflow-hidden">
-              <CardHeader className="bg-gradient-to-r from-blue-600/10 to-indigo-600/10 border-b border-blue-100/50">
-                <CardTitle className="flex items-center space-x-3 text-gray-800">
-                  <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+            <Card className="bg-slate-900/50 backdrop-blur-sm border-slate-800/50 shadow-xl rounded-2xl overflow-hidden">
+              <CardHeader className="bg-gradient-to-r from-violet-600/10 to-purple-600/10 border-b border-slate-800/50">
+                <CardTitle className="flex items-center space-x-3 text-gray-200">
+                  <div className="w-10 h-10 bg-gradient-to-br from-violet-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
                     <Sparkles className="w-5 h-5 text-white" />
                   </div>
                   <span className="text-xl font-semibold">Meeting Instructions</span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-6">
-                <div className="prose prose-sm max-w-none text-gray-700">
+                <div className="prose prose-sm max-w-none text-gray-300">
                   <p className="whitespace-pre-wrap leading-relaxed text-base">
                     {instructionsText}
                   </p>
@@ -392,7 +392,7 @@ export const MeetingDetailView = ({ meetingId }: MeetingDetailViewProps) => {
                       variant="ghost"
                       size="sm"
                       onClick={() => setShowFullInstructions(true)}
-                      className="mt-3 text-blue-600 hover:text-blue-700 hover:bg-blue-50 px-0"
+                      className="mt-3 text-violet-400 hover:text-violet-300 hover:bg-violet-950/30 px-0"
                     >
                       Show more...
                     </Button>
@@ -402,7 +402,7 @@ export const MeetingDetailView = ({ meetingId }: MeetingDetailViewProps) => {
                       variant="ghost"
                       size="sm"
                       onClick={() => setShowFullInstructions(false)}
-                      className="mt-3 text-blue-600 hover:text-blue-700 hover:bg-blue-50 px-0"
+                      className="mt-3 text-violet-400 hover:text-violet-300 hover:bg-violet-950/30 px-0"
                     >
                       Show less
                     </Button>
@@ -412,18 +412,18 @@ export const MeetingDetailView = ({ meetingId }: MeetingDetailViewProps) => {
             </Card>
 
             {(meeting.transcriptUrl || meeting.recordingUrl || meeting.summary) && (
-              <Card className="bg-white/80 backdrop-blur-sm border-gray-200/50">
+              <Card className="bg-slate-900/50 backdrop-blur-sm border-slate-800/50">
                 <CardHeader>
-                  <CardTitle className="flex items-center space-x-2">
-                    <Video className="w-5 h-5 text-purple-600" />
+                  <CardTitle className="flex items-center space-x-2 text-gray-200">
+                    <Video className="w-5 h-5 text-purple-400" />
                     <span>Meeting Resources</span>
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   {meeting.recordingUrl && (
                     <div>
-                      <h4 className="text-sm font-medium text-gray-800 mb-3 flex items-center">
-                        <Video className="w-4 h-4 mr-2 text-purple-600" />
+                      <h4 className="text-sm font-medium text-gray-300 mb-3 flex items-center">
+                        <Video className="w-4 h-4 mr-2 text-purple-400" />
                         Meeting Recording
                       </h4>
                       <div className="relative rounded-lg overflow-hidden bg-black">
@@ -443,12 +443,12 @@ export const MeetingDetailView = ({ meetingId }: MeetingDetailViewProps) => {
 
                   {meeting.summary && (
                     <div>
-                      <h4 className="text-sm font-medium text-gray-800 mb-3 flex items-center">
-                        <FileText className="w-4 h-4 mr-2 text-green-600" />
+                      <h4 className="text-sm font-medium text-gray-300 mb-3 flex items-center">
+                        <FileText className="w-4 h-4 mr-2 text-green-400" />
                         Meeting Summary
                       </h4>
-                      <div className="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200/50 rounded-lg p-4">
-                        <div className="prose prose-sm max-w-none text-gray-700">
+                      <div className="bg-gradient-to-br from-green-950/30 to-emerald-950/30 border border-green-800/50 rounded-lg p-4">
+                        <div className="prose prose-sm max-w-none text-gray-300">
                           <p className="whitespace-pre-wrap leading-relaxed text-sm">
                             {meeting.summary}
                           </p>
@@ -459,13 +459,13 @@ export const MeetingDetailView = ({ meetingId }: MeetingDetailViewProps) => {
 
                   {meeting.transcriptUrl && (
                     <div>
-                      <h4 className="text-sm font-medium text-gray-800 mb-3 flex items-center">
-                        <FileText className="w-4 h-4 mr-2 text-blue-600" />
+                      <h4 className="text-sm font-medium text-gray-300 mb-3 flex items-center">
+                        <FileText className="w-4 h-4 mr-2 text-blue-400" />
                         Transcript
                       </h4>
                       <Button
                         variant="outline"
-                        className="w-full justify-start hover:bg-blue-50 hover:border-blue-200"
+                        className="w-full justify-start hover:bg-slate-800/50 hover:border-slate-600 text-gray-300 border-slate-700/50"
                         onClick={() => setIsTranscriptModalOpen(true)}
                       >
                         <FileText className="w-4 h-4 mr-2" />
@@ -510,7 +510,7 @@ export const MeetingDetailView = ({ meetingId }: MeetingDetailViewProps) => {
                       </Button>
                       <Button
                         variant="outline"
-                        className="w-full hover:bg-red-50 hover:border-red-200 hover:text-red-600"
+                        className="w-full hover:bg-red-950/30 hover:border-red-800/50 hover:text-red-400 text-gray-300 border-slate-700/50"
                         disabled
                       >
                         <X className="w-4 h-4 mr-2" />
@@ -539,65 +539,65 @@ export const MeetingDetailView = ({ meetingId }: MeetingDetailViewProps) => {
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200/50">
+            <Card className="bg-gradient-to-br from-violet-950/30 to-purple-950/30 border-violet-800/50">
               <CardHeader>
-                <CardTitle className="flex items-center space-x-2 text-blue-900">
+                <CardTitle className="flex items-center space-x-2 text-violet-300">
                   <Bot className="w-5 h-5" />
                   <span>Agent Information</span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <div>
-                  <label className="text-sm font-medium text-blue-800">Agent Name</label>
-                  <p className="text-sm text-blue-700 mt-1 font-medium">
+                  <label className="text-sm font-medium text-violet-400">Agent Name</label>
+                  <p className="text-sm text-violet-300 mt-1 font-medium">
                     {meeting.agentName || 'No agent assigned'}
                   </p>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="bg-white/80 backdrop-blur-sm border-gray-200/50">
+            <Card className="bg-slate-900/50 backdrop-blur-sm border-slate-800/50">
               <CardHeader>
-                <CardTitle className="flex items-center space-x-2 text-gray-900">
+                <CardTitle className="flex items-center space-x-2 text-gray-200">
                   <Calendar className="w-5 h-5" />
                   <span>Meeting Details</span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <label className="text-sm font-medium text-gray-800">Meeting ID</label>
-                  <p className="text-sm text-gray-700 font-mono bg-gray-100 px-2 py-1 rounded mt-1">
+                  <label className="text-sm font-medium text-gray-400">Meeting ID</label>
+                  <p className="text-sm text-gray-300 font-mono bg-slate-800/50 px-2 py-1 rounded mt-1">
                     {meeting.id}
                   </p>
                 </div>
 
                 {scheduledTime && (
                   <div>
-                    <label className="text-sm font-medium text-gray-800">Scheduled Time</label>
-                    <p className="text-sm text-gray-700 mt-1">
+                    <label className="text-sm font-medium text-gray-400">Scheduled Time</label>
+                    <p className="text-sm text-gray-300 mt-1">
                       {scheduledTime}
                     </p>
                   </div>
                 )}
-                
+
                 <div>
-                  <label className="text-sm font-medium text-gray-800">Created</label>
-                  <p className="text-sm text-gray-700 mt-1">
+                  <label className="text-sm font-medium text-gray-400">Created</label>
+                  <p className="text-sm text-gray-300 mt-1">
                     {new Date(meeting.createdAt).toLocaleString()}
                   </p>
                 </div>
-                
+
                 <div>
-                  <label className="text-sm font-medium text-gray-800">Last Updated</label>
-                  <p className="text-sm text-gray-700 mt-1">
+                  <label className="text-sm font-medium text-gray-400">Last Updated</label>
+                  <p className="text-sm text-gray-300 mt-1">
                     {new Date(meeting.updatedAt).toLocaleString()}
                   </p>
                 </div>
 
                 {meeting.startedAt && (
                   <div>
-                    <label className="text-sm font-medium text-gray-800">Started At</label>
-                    <p className="text-sm text-gray-700 mt-1">
+                    <label className="text-sm font-medium text-gray-400">Started At</label>
+                    <p className="text-sm text-gray-300 mt-1">
                       {new Date(meeting.startedAt).toLocaleString()}
                     </p>
                   </div>
@@ -605,8 +605,8 @@ export const MeetingDetailView = ({ meetingId }: MeetingDetailViewProps) => {
 
                 {meeting.endedAt && (
                   <div>
-                    <label className="text-sm font-medium text-gray-800">Ended At</label>
-                    <p className="text-sm text-gray-700 mt-1">
+                    <label className="text-sm font-medium text-gray-400">Ended At</label>
+                    <p className="text-sm text-gray-300 mt-1">
                       {new Date(meeting.endedAt).toLocaleString()}
                     </p>
                   </div>
@@ -614,23 +614,23 @@ export const MeetingDetailView = ({ meetingId }: MeetingDetailViewProps) => {
               </CardContent>
             </Card>
 
-            <Card className="bg-white/80 backdrop-blur-sm border-gray-200/50">
+            <Card className="bg-slate-900/50 backdrop-blur-sm border-slate-800/50">
               <CardHeader>
-                <CardTitle className="text-gray-900">Quick Actions</CardTitle>
+                <CardTitle className="text-gray-200">Quick Actions</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <Button
                   variant="outline"
-                  className="w-full justify-start"
+                  className="w-full justify-start text-gray-300 border-slate-700/50 hover:bg-slate-800/50 hover:border-slate-600"
                   onClick={() => setIsEditDialogOpen(true)}
                 >
                   <Edit className="w-4 h-4 mr-2" />
                   Edit Meeting Details
                 </Button>
-                
+
                 <Button
                   variant="outline"
-                  className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
+                  className="w-full justify-start text-red-400 hover:text-red-300 hover:bg-red-950/30 border-slate-700/50 hover:border-red-800/50"
                   onClick={() => setIsDeleteDialogOpen(true)}
                 >
                   <Trash2 className="w-4 h-4 mr-2" />

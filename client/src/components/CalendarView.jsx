@@ -119,42 +119,42 @@ function CalendarView() {
           <h1 className="text-2xl font-bold text-white">Calendar</h1>
           <p className="text-gray-400">View and manage your scheduled meetings</p>
         </div>
-        <button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 px-4 py-2 rounded-lg text-white font-medium flex items-center">
+        <button className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white font-medium flex items-center">
           <Plus className="w-4 h-4 mr-2" />
           New Meeting
         </button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
         {/* Calendar Grid */}
-        <div className="lg:col-span-2 bg-slate-900/50 backdrop-blur-sm border border-violet-500/20 rounded-xl p-6">
+        <div className="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-xl p-6">
           <div className="flex items-center justify-between mb-6">
             <button 
               onClick={() => navigateMonth(-1)}
-              className="p-2 hover:bg-violet-500/10 rounded-lg transition-colors"
+              className="p-2 hover:bg-slate-800 rounded-lg transition-colors"
             >
-              <ChevronLeft className="w-5 h-5 text-gray-400" />
+              <ChevronLeft className="w-5 h-5 text-slate-400" />
             </button>
             <h2 className="text-xl font-semibold text-white">
               {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
             </h2>
             <button 
               onClick={() => navigateMonth(1)}
-              className="p-2 hover:bg-violet-500/10 rounded-lg transition-colors"
+              className="p-2 hover:bg-slate-800 rounded-lg transition-colors"
             >
-              <ChevronRight className="w-5 h-5 text-gray-400" />
+              <ChevronRight className="w-5 h-5 text-slate-400" />
             </button>
           </div>
 
-          <div className="grid grid-cols-7 gap-2 mb-4">
+          <div className="grid grid-cols-7 gap-1 md:gap-2 mb-4">
             {dayNames.map(day => (
-              <div key={day} className="text-center text-sm font-medium text-gray-400 py-2">
+              <div key={day} className="text-center text-xs md:text-sm font-medium text-slate-400 py-2">
                 {day}
               </div>
             ))}
           </div>
 
-          <div className="grid grid-cols-7 gap-2">
+          <div className="grid grid-cols-7 gap-1 md:gap-2">
             {days.map((date, index) => {
               if (!date) {
                 return <div key={index} className="h-12" />;
@@ -169,13 +169,13 @@ function CalendarView() {
                   key={index}
                   onClick={() => selectDate(date)}
                   className={`
-                    h-12 rounded-lg flex flex-col items-center justify-center transition-all duration-200
+                    h-10 md:h-12 rounded-lg flex flex-col items-center justify-center transition-all duration-200
                     ${today ? 'bg-violet-600 text-white' : ''}
                     ${selected && !today ? 'bg-violet-500/20 text-violet-300 border border-violet-500/30' : ''}
                     ${!today && !selected ? 'hover:bg-violet-500/10 text-gray-300' : ''}
                   `}
                 >
-                  <span className="text-sm font-medium">{date.getDate()}</span>
+                  <span className="text-xs md:text-sm font-medium">{date.getDate()}</span>
                   {hasMeetings && (
                     <div className="flex gap-1 mt-1">
                       <div className="w-1 h-1 bg-violet-400 rounded-full" />

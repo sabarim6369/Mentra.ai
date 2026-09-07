@@ -1,102 +1,74 @@
-import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { ArrowRight, Sparkles } from 'lucide-react';
 
-function LandingPage({ onNavigate }) {
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    // Simulate loading state
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-violet-950 via-purple-950 to-slate-950 flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-violet-500 border-t-transparent rounded-full animate-spin"></div>
-      </div>
-    );
-  }
-
+function LandingPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-violet-950 via-purple-950 to-slate-950">
-      <div className="absolute inset-0 bg-grid-slate-800 [mask-image:linear-gradient(0deg,rgba(10,10,20,0.8),rgba(20,20,40,0.6))]" />
+    <div className="min-h-screen bg-slate-950">
       <div className="relative">
-        <div className="absolute top-0 left-0 w-full h-full overflow-hidden">
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-violet-600 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob" />
-          <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-purple-600 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000" />
-          <div className="absolute bottom-1/4 left-1/3 w-96 h-96 bg-fuchsia-600 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000" />
-        </div>
-
         <div className="relative z-10">
-          <nav className="container mx-auto px-6 py-6">
+          <nav className="container mx-auto px-4 md:px-6 py-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
-                <div className="w-10 h-10 bg-gradient-to-r from-violet-600 to-purple-600 rounded-lg flex items-center justify-center">
-                  <div className="w-6 h-6 bg-white rounded-sm"></div>
+                <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                  <Sparkles className="w-5 h-5 text-white" />
                 </div>
-                <span className="text-2xl font-bold text-white">MentraAI</span>
+                <span className="text-xl md:text-2xl font-bold text-white">MentraAI</span>
               </div>
               
-              <div className="flex items-center space-x-4">
-                <button 
-                  onClick={() => onNavigate('signin')}
-                  className="text-gray-300 hover:text-violet-400 font-medium px-4 py-2 transition-colors"
+              <div className="flex items-center space-x-2 md:space-x-4">
+                <Link 
+                  to="/login"
+                  className="text-slate-300 hover:text-white font-medium px-3 md:px-4 py-2 transition-colors text-sm md:text-base"
                 >
                   Sign In
-                </button>
-                <button 
-                  onClick={() => onNavigate('signup')}
-                  className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white font-semibold shadow-lg hover:shadow-violet-500/25 transition-all duration-200 px-6 py-2 rounded-lg"
+                </Link>
+                <Link 
+                  to="/signup"
+                  className="bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors px-4 md:px-6 py-2 rounded-lg text-sm md:text-base"
                 >
                   Get Started
-                </button>
+                </Link>
               </div>
             </div>
           </nav>
 
-          <main className="container mx-auto px-6">
-            <div className="text-center py-20">
-              <div className="flex justify-center mb-8">
+          <main className="container mx-auto px-4 md:px-6">
+            <div className="text-center py-12 md:py-20">
+              <div className="flex justify-center mb-6 md:mb-8">
                 <div className="relative">
-                  <div className="w-20 h-20 bg-gradient-to-r from-violet-600 to-purple-600 rounded-2xl flex items-center justify-center shadow-2xl shadow-violet-500/30">
-                    <Sparkles className="w-10 h-10 text-white" />
-                  </div>
-                  <div className="absolute -top-1 -right-1 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center animate-pulse">
-                    <div className="w-2 h-2 bg-white rounded-full"></div>
+                  <div className="w-16 h-16 md:w-20 md:h-20 bg-blue-600 rounded-2xl flex items-center justify-center shadow-2xl">
+                    <Sparkles className="w-8 h-8 md:w-10 md:h-10 text-white" />
                   </div>
                 </div>
               </div>
 
-              <h1 className="text-6xl font-bold text-white mb-6 leading-tight">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 md:mb-6 leading-tight">
                 Welcome to
-                <span className="block bg-gradient-to-r from-violet-400 to-purple-400 bg-clip-text text-transparent">
+                <span className="block text-blue-500">
                   MentraAI
                 </span>
               </h1>
 
-              <p className="text-xl text-gray-300 mb-12 max-w-3xl mx-auto leading-relaxed">
+              <p className="text-lg md:text-xl text-slate-300 mb-8 md:mb-12 max-w-3xl mx-auto leading-relaxed px-4">
                 Transform your workflow with the power of artificial intelligence. 
                 Collaborate, create, and innovate like never before with our cutting-edge platform 
                 designed for the future of work.
               </p>
 
-              <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
-                <button 
-                  onClick={() => onNavigate('signup')}
-                  className="px-8 py-4 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white font-semibold rounded-xl shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 transition-all duration-200 transform hover:scale-105 text-lg flex items-center justify-center"
+              <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center mb-12 md:mb-16 px-4">
+                <Link 
+                  to="/signup"
+                  className="px-6 md:px-8 py-3 md:py-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-colors text-base md:text-lg flex items-center justify-center"
                 >
                   Start Your Journey
-                  <ArrowRight className="ml-2 w-5 h-5" />
-                </button>
-                <button 
-                  onClick={() => onNavigate('signin')}
-                  className="px-8 py-4 border-2 border-violet-500/30 hover:border-violet-500 text-gray-300 hover:text-white font-semibold rounded-xl shadow-sm hover:shadow-violet-500/20 transition-all duration-200 text-lg"
+                  <ArrowRight className="ml-2 w-4 h-4 md:w-5 md:h-5" />
+                </Link>
+                <Link 
+                  to="/login"
+                  className="px-6 md:px-8 py-3 md:py-4 border-2 border-slate-700 hover:border-slate-600 text-slate-300 hover:text-white font-semibold rounded-xl transition-colors text-base md:text-lg"
                 >
                   Sign In
-                </button>
+                </Link>
               </div>
             </div>
           </main>

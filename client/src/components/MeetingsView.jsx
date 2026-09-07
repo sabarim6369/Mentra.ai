@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { Video, Plus, Search, Calendar, ArrowRight, Sparkles, Bot, Clock, X, Filter } from 'lucide-react';
+import { Video, Plus, Search, Calendar, ArrowRight, Bot, Clock, Filter } from 'lucide-react';
 
 const statusColors = {
-  upcoming: { bg: 'bg-violet-500/20', text: 'text-violet-300', border: 'border-violet-500/30' },
-  active: { bg: 'bg-emerald-500/20', text: 'text-emerald-300', border: 'border-emerald-500/30' },
+  upcoming: { bg: 'bg-blue-500/20', text: 'text-blue-300', border: 'border-blue-500/30' },
+  active: { bg: 'bg-green-500/20', text: 'text-green-300', border: 'border-green-500/30' },
   completed: { bg: 'bg-slate-500/20', text: 'text-slate-300', border: 'border-slate-500/30' },
   cancelled: { bg: 'bg-red-500/20', text: 'text-red-300', border: 'border-red-500/30' },
   processing: { bg: 'bg-amber-500/20', text: 'text-amber-300', border: 'border-amber-500/30' },
@@ -123,7 +123,7 @@ function MeetingsView() {
           </div>
           <button
             onClick={() => setIsCreateDialogOpen(true)}
-            className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 px-4 py-2 rounded-lg text-white font-medium flex items-center"
+            className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white font-medium flex items-center"
           >
             <Plus className="w-4 h-4 mr-2" />
             New Meeting
@@ -132,11 +132,8 @@ function MeetingsView() {
 
         <div className="flex flex-col items-center justify-center min-h-[400px] text-center">
           <div className="relative mb-8">
-            <div className="w-24 h-24 bg-gradient-to-br from-violet-500/20 to-purple-500/20 rounded-3xl flex items-center justify-center">
-              <Video className="w-12 h-12 text-violet-400" />
-            </div>
-            <div className="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center animate-pulse">
-              <Sparkles className="w-4 h-4 text-white" />
+            <div className="w-24 h-24 bg-blue-500/20 rounded-3xl flex items-center justify-center">
+              <Video className="w-12 h-12 text-blue-400" />
             </div>
           </div>
           
@@ -150,7 +147,7 @@ function MeetingsView() {
           
           <button
             onClick={() => setIsCreateDialogOpen(true)}
-            className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-200 px-6 py-3 rounded-lg text-white font-medium flex items-center"
+            className="bg-blue-600 hover:bg-blue-700 shadow-lg hover:shadow-xl transition-all duration-200 px-6 py-3 rounded-lg text-white font-medium flex items-center"
           >
             <Plus className="w-4 h-4 mr-2" />
             Schedule Your First Meeting
@@ -171,7 +168,7 @@ function MeetingsView() {
         </div>
         <button
           onClick={() => setIsCreateDialogOpen(true)}
-          className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 px-4 py-2 rounded-lg text-white font-medium flex items-center"
+          className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white font-medium flex items-center"
         >
           <Plus className="w-4 h-4 mr-2" />
           New Meeting
@@ -187,7 +184,7 @@ function MeetingsView() {
               placeholder="Search meetings..."
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-slate-900/50 border border-violet-500/30 rounded-md text-gray-300 placeholder:text-gray-500 focus:outline-none focus:border-violet-500"
+              className="w-full pl-10 pr-4 py-2 bg-slate-800 border border-slate-700 rounded-md text-white placeholder:text-slate-500 focus:outline-none focus:border-blue-500"
             />
           </div>
 
@@ -197,7 +194,7 @@ function MeetingsView() {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="w-40 pl-10 pr-4 py-2 bg-slate-900/50 border border-violet-500/30 rounded-md text-gray-300 focus:outline-none focus:border-violet-500 appearance-none cursor-pointer"
+                className="w-40 pl-10 pr-4 py-2 bg-slate-800 border border-slate-700 rounded-md text-white focus:outline-none focus:border-blue-500 appearance-none cursor-pointer"
               >
                 <option value="all">All Status</option>
                 <option value="upcoming">Upcoming</option>
@@ -222,21 +219,21 @@ function MeetingsView() {
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {filteredMeetings.map((meeting) => {
             const statusColor = statusColors[meeting.status];
             const scheduledTime = formatScheduledTime(meeting.scheduledStartTime);
             return (
               <div 
                 key={meeting.id} 
-                className="hover:shadow-lg transition-all duration-200 cursor-pointer group hover:scale-[1.02] bg-slate-900/50 backdrop-blur-sm border border-violet-500/20 rounded-xl p-6"
+                className="hover:shadow-lg transition-all duration-200 cursor-pointer group hover:scale-[1.02] bg-slate-900 border border-slate-800 rounded-xl p-6"
               >
                 <div className="flex items-start space-x-3 mb-4">
-                  <div className="w-12 h-12 bg-gradient-to-br from-violet-500 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+                  <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
                     <Video className="w-6 h-6 text-white" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-lg font-semibold text-white group-hover:text-violet-400 transition-colors line-clamp-1">
+                    <h3 className="text-lg font-semibold text-white group-hover:text-blue-400 transition-colors line-clamp-1">
                       {meeting.name}
                     </h3>
                     <div className="flex items-center space-x-2 mt-1">
@@ -251,24 +248,24 @@ function MeetingsView() {
                       )}
                     </div>
                   </div>
-                  <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-violet-400 group-hover:translate-x-1 transition-all opacity-0 group-hover:opacity-100" />
+                  <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-blue-400 group-hover:translate-x-1 transition-all opacity-0 group-hover:opacity-100" />
                 </div>
                 
                 <div className="space-y-3">
-                  <div className="flex items-center space-x-2 text-sm text-gray-300">
+                  <div className="flex items-center space-x-2 text-sm text-slate-300">
                     <Bot className="w-4 h-4" />
                     <span>Agent: {meeting.agentName}</span>
                   </div>
                   {scheduledTime && (
-                    <div className="flex items-center space-x-2 text-sm text-violet-400">
+                    <div className="flex items-center space-x-2 text-sm text-blue-400">
                       <Calendar className="w-4 h-4" />
                       <span>Scheduled: {scheduledTime}</span>
                     </div>
                   )}
-                  <p className="text-gray-400 text-sm line-clamp-2 leading-relaxed">
+                  <p className="text-slate-400 text-sm line-clamp-2 leading-relaxed">
                     {meeting.instructions}
                   </p>
-                  <div className="text-xs text-gray-500">
+                  <div className="text-xs text-slate-500">
                     Created {new Date(meeting.createdAt).toLocaleDateString()}
                   </div>
                 </div>

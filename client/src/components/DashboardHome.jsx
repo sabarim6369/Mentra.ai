@@ -26,7 +26,7 @@ function DashboardHome() {
   return (
     <div className="p-4 md:p-6 space-y-4 md:space-y-6">
       {/* Welcome Section */}
-      <div className="relative overflow-hidden rounded-xl bg-blue-600 p-4 md:p-6 text-white">
+      <div className="relative overflow-hidden rounded-xl bg-blue-500 p-4 md:p-6 text-white">
         <div className="relative">
           <div className="flex items-center justify-between">
             <div>
@@ -77,7 +77,7 @@ function DashboardHome() {
               className="bg-slate-900 border border-slate-800 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-[1.02] group cursor-pointer rounded-xl p-4 text-left h-full min-h-[100px] block"
             >
               <div className="flex items-start gap-4 h-full">
-                <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform flex-shrink-0">
+                <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform flex-shrink-0">
                   <IconComponent className="w-5 h-5 text-white" />
                 </div>
                 <div className="flex-1 min-w-0 flex flex-col justify-center">

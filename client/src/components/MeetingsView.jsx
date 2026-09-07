@@ -123,7 +123,7 @@ function MeetingsView() {
           </div>
           <button
             onClick={() => setIsCreateDialogOpen(true)}
-            className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white font-medium flex items-center"
+            className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-lg text-white font-medium flex items-center"
           >
             <Plus className="w-4 h-4 mr-2" />
             New Meeting

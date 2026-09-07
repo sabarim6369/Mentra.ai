@@ -12,7 +12,7 @@ function DashboardNavbar({ onToggleSidebar }) {
         </button>
         
         <div className="flex items-center gap-2 flex-1">
-          <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+          <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
           <h1 className="font-semibold text-white">Dashboard</h1>
         </div>
       </div>

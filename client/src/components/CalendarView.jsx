@@ -117,7 +117,7 @@ function CalendarView() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-white">Calendar</h1>
-          <p className="text-gray-400">View and manage your scheduled meetings</p>
+          <p className="text-slate-400">View and manage your scheduled meetings</p>
         </div>
         <button className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white font-medium flex items-center">
           <Plus className="w-4 h-4 mr-2" />
@@ -170,15 +170,15 @@ function CalendarView() {
                   onClick={() => selectDate(date)}
                   className={`
                     h-10 md:h-12 rounded-lg flex flex-col items-center justify-center transition-all duration-200
-                    ${today ? 'bg-violet-600 text-white' : ''}
-                    ${selected && !today ? 'bg-violet-500/20 text-violet-300 border border-violet-500/30' : ''}
-                    ${!today && !selected ? 'hover:bg-violet-500/10 text-gray-300' : ''}
+                    ${today ? 'bg-blue-600 text-white' : ''}
+                    ${selected && !today ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30' : ''}
+                    ${!today && !selected ? 'hover:bg-slate-800 text-slate-300' : ''}
                   `}
                 >
                   <span className="text-xs md:text-sm font-medium">{date.getDate()}</span>
                   {hasMeetings && (
                     <div className="flex gap-1 mt-1">
-                      <div className="w-1 h-1 bg-violet-400 rounded-full" />
+                      <div className="w-1 h-1 bg-blue-400 rounded-full" />
                     </div>
                   )}
                 </button>
@@ -188,9 +188,9 @@ function CalendarView() {
         </div>
 
         {/* Selected Date Meetings */}
-        <div className="bg-slate-900/50 backdrop-blur-sm border border-violet-500/20 rounded-xl p-6">
+        <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
           <div className="flex items-center gap-2 mb-6">
-            <CalendarIcon className="w-5 h-5 text-violet-400" />
+            <CalendarIcon className="w-5 h-5 text-blue-400" />
             <h2 className="text-lg font-semibold text-white">
               {selectedDate.toLocaleDateString('en-US', { 
                 weekday: 'long', 
@@ -202,29 +202,29 @@ function CalendarView() {
 
           {selectedMeetings.length === 0 ? (
             <div className="flex flex-col items-center justify-center min-h-[200px] text-center">
-              <CalendarIcon className="w-12 h-12 text-gray-400 mb-4" />
-              <p className="text-gray-400">No meetings scheduled</p>
+              <CalendarIcon className="w-12 h-12 text-slate-400 mb-4" />
+              <p className="text-slate-400">No meetings scheduled</p>
             </div>
           ) : (
             <div className="space-y-4">
               {selectedMeetings.map(meeting => (
                 <div 
                   key={meeting.id}
-                  className="bg-slate-800/50 border border-violet-500/20 rounded-lg p-4 hover:border-violet-500/40 transition-colors"
+                  className="bg-slate-800 border border-slate-700 rounded-lg p-4 hover:border-slate-600 transition-colors"
                 >
                   <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 bg-gradient-to-br from-violet-500 to-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
                       <Video className="w-5 h-5 text-white" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <h3 className="font-medium text-white text-sm mb-1">
                         {meeting.name}
                       </h3>
-                      <div className="flex items-center gap-2 text-xs text-gray-400 mb-2">
+                      <div className="flex items-center gap-2 text-xs text-slate-400 mb-2">
                         <Clock className="w-3 h-3" />
                         <span>{meeting.time} • {meeting.duration}</span>
                       </div>
-                      <div className="flex items-center gap-2 text-xs text-gray-400">
+                      <div className="flex items-center gap-2 text-xs text-slate-400">
                         <Bot className="w-3 h-3" />
                         <span>{meeting.agentName}</span>
                       </div>

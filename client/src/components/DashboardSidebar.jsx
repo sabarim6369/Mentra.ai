@@ -45,7 +45,7 @@ function DashboardSidebar({ isOpen, isCollapsed }) {
         <div className="border-b border-slate-800 p-4">
           <Link to="/" className="flex items-center gap-3">
             <div className="flex-shrink-0">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shadow-sm">
+              <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center shadow-sm">
                 <Sparkles className="w-4 h-4 text-white" />
               </div>
             </div>
@@ -77,7 +77,7 @@ function DashboardSidebar({ isOpen, isCollapsed }) {
                     className={`
                       group relative w-full h-10 px-3 rounded-lg transition-all duration-200 flex items-center
                       ${isActive 
-                        ? 'bg-blue-600 text-white' 
+                        ? 'bg-blue-500 text-white' 
                         : 'hover:bg-slate-800 text-slate-300 hover:text-white'
                       }
                     `}
@@ -103,7 +103,7 @@ function DashboardSidebar({ isOpen, isCollapsed }) {
         {/* User Profile */}
         <div className="border-t border-slate-800 p-3">
           <div className="w-full h-12 p-2 rounded-lg flex items-center gap-3">
-            <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+            <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
               <span className="text-white text-sm font-medium">U</span>
             </div>
             {!isCollapsed && (

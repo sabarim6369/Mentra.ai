@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Video, Plus, Search, Calendar, ArrowRight, Bot, Clock, Filter } from 'lucide-react';
+import { Video, Plus, Search, Calendar, ArrowRight, Bot, Clock, Filter, X } from 'lucide-react';
+import Modal from './Modal';
 
 const statusColors = {
   upcoming: { bg: 'bg-blue-500/20', text: 'text-blue-300', border: 'border-blue-500/30' },
@@ -66,6 +67,13 @@ function MeetingsView() {
   const [searchInput, setSearchInput] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [meetings] = useState(mockMeetings);
+  const [newMeeting, setNewMeeting] = useState({
+    name: '',
+    agentName: '',
+    scheduledStartTime: '',
+    duration: 60,
+    instructions: ''
+  });
 
   const formatDuration = (duration) => {
     if (!duration) return null;
@@ -112,6 +120,18 @@ function MeetingsView() {
     const matchesStatus = statusFilter === 'all' || meeting.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
+
+  const handleCreateMeeting = () => {
+    console.log('Creating meeting:', newMeeting);
+    setIsCreateDialogOpen(false);
+    setNewMeeting({
+      name: '',
+      agentName: '',
+      scheduledStartTime: '',
+      duration: 60,
+      instructions: ''
+    });
+  };
 
   if (meetings.length === 0) {
     return (
@@ -274,6 +294,89 @@ function MeetingsView() {
           })}
         </div>
       )}
+
+      {/* Create Meeting Modal */}
+      <Modal
+        isOpen={isCreateDialogOpen}
+        onClose={() => setIsCreateDialogOpen(false)}
+        title="Create New Meeting"
+      >
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-2">Meeting Name</label>
+            <input
+              type="text"
+              value={newMeeting.name}
+              onChange={(e) => setNewMeeting({ ...newMeeting, name: e.target.value })}
+              placeholder="Enter meeting name"
+              className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder:text-slate-500 focus:outline-none focus:border-blue-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-2">Agent</label>
+            <select
+              value={newMeeting.agentName}
+              onChange={(e) => setNewMeeting({ ...newMeeting, agentName: e.target.value })}
+              className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
+            >
+              <option value="">Select an agent</option>
+              <option value="Strategy Assistant">Strategy Assistant</option>
+              <option value="Meeting Facilitator">Meeting Facilitator</option>
+              <option value="Client Relations Bot">Client Relations Bot</option>
+              <option value="Tech Lead Assistant">Tech Lead Assistant</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-2">Scheduled Time</label>
+            <input
+              type="datetime-local"
+              value={newMeeting.scheduledStartTime}
+              onChange={(e) => setNewMeeting({ ...newMeeting, scheduledStartTime: e.target.value })}
+              className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-2">Duration (minutes)</label>
+            <input
+              type="number"
+              value={newMeeting.duration}
+              onChange={(e) => setNewMeeting({ ...newMeeting, duration: parseInt(e.target.value) })}
+              min="15"
+              step="15"
+              className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-2">Instructions</label>
+            <textarea
+              value={newMeeting.instructions}
+              onChange={(e) => setNewMeeting({ ...newMeeting, instructions: e.target.value })}
+              placeholder="Enter meeting instructions or agenda"
+              rows="4"
+              className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder:text-slate-500 focus:outline-none focus:border-blue-500 resize-none"
+            />
+          </div>
+
+          <div className="flex gap-3 pt-4">
+            <button
+              onClick={() => setIsCreateDialogOpen(false)}
+              className="flex-1 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleCreateMeeting}
+              className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+            >
+              Create Meeting
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }

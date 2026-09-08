@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Video, Clock, Bot, Plus } from 'lucide-react';
+import Modal from './Modal';
 
 // Mock meetings data with dates
 const mockMeetings = [
@@ -53,6 +54,13 @@ const mockMeetings = [
 function CalendarView() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [newMeeting, setNewMeeting] = useState({
+    name: '',
+    agentName: '',
+    time: '',
+    duration: 60
+  });
 
   const getDaysInMonth = (date) => {
     const year = date.getFullYear();
@@ -105,6 +113,17 @@ function CalendarView() {
     return date.toDateString() === selectedDate.toDateString();
   };
 
+  const handleCreateMeeting = () => {
+    console.log('Creating meeting for date:', selectedDate, newMeeting);
+    setIsCreateDialogOpen(false);
+    setNewMeeting({
+      name: '',
+      agentName: '',
+      time: '',
+      duration: 60
+    });
+  };
+
   const days = getDaysInMonth(currentDate);
   const selectedMeetings = getMeetingsForDate(selectedDate);
 
@@ -119,7 +138,10 @@ function CalendarView() {
           <h1 className="text-2xl font-bold text-white">Calendar</h1>
           <p className="text-slate-400">View and manage your scheduled meetings</p>
         </div>
-        <button className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white font-medium flex items-center">
+        <button 
+          onClick={() => setIsCreateDialogOpen(true)}
+          className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white font-medium flex items-center"
+        >
           <Plus className="w-4 h-4 mr-2" />
           New Meeting
         </button>
@@ -236,6 +258,88 @@ function CalendarView() {
           )}
         </div>
       </div>
+
+      {/* Create Meeting Modal */}
+      <Modal
+        isOpen={isCreateDialogOpen}
+        onClose={() => setIsCreateDialogOpen(false)}
+        title="Create New Meeting"
+      >
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-2">Meeting Name</label>
+            <input
+              type="text"
+              value={newMeeting.name}
+              onChange={(e) => setNewMeeting({ ...newMeeting, name: e.target.value })}
+              placeholder="Enter meeting name"
+              className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder:text-slate-500 focus:outline-none focus:border-blue-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-2">Date</label>
+            <input
+              type="date"
+              value={selectedDate.toISOString().split('T')[0]}
+              onChange={(e) => setSelectedDate(new Date(e.target.value))}
+              className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-2">Time</label>
+            <input
+              type="time"
+              value={newMeeting.time}
+              onChange={(e) => setNewMeeting({ ...newMeeting, time: e.target.value })}
+              className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-2">Agent</label>
+            <select
+              value={newMeeting.agentName}
+              onChange={(e) => setNewMeeting({ ...newMeeting, agentName: e.target.value })}
+              className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
+            >
+              <option value="">Select an agent</option>
+              <option value="Strategy Assistant">Strategy Assistant</option>
+              <option value="Meeting Facilitator">Meeting Facilitator</option>
+              <option value="Client Relations Bot">Client Relations Bot</option>
+              <option value="Tech Lead Assistant">Tech Lead Assistant</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-2">Duration (minutes)</label>
+            <input
+              type="number"
+              value={newMeeting.duration}
+              onChange={(e) => setNewMeeting({ ...newMeeting, duration: parseInt(e.target.value) })}
+              min="15"
+              step="15"
+              className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
+            />
+          </div>
+
+          <div className="flex gap-3 pt-4">
+            <button
+              onClick={() => setIsCreateDialogOpen(false)}
+              className="flex-1 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleCreateMeeting}
+              className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+            >
+              Create Meeting
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Bot, Plus, Search, ArrowRight, Filter } from 'lucide-react';
+import Modal from './Modal';
 
 const agentTypeColors = {
   assistant: { bg: 'bg-blue-500/20', text: 'text-blue-300', border: 'border-blue-500/30' },
@@ -56,6 +57,12 @@ function AgentsView() {
   const [searchInput, setSearchInput] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
   const [agents] = useState(mockAgents);
+  const [newAgent, setNewAgent] = useState({
+    name: '',
+    type: 'assistant',
+    description: '',
+    capabilities: ''
+  });
 
   const filteredAgents = agents.filter(agent => {
     const matchesSearch = agent.name.toLowerCase().includes(searchInput.toLowerCase()) ||
@@ -63,6 +70,17 @@ function AgentsView() {
     const matchesType = typeFilter === 'all' || agent.type === typeFilter;
     return matchesSearch && matchesType;
   });
+
+  const handleCreateAgent = () => {
+    console.log('Creating agent:', newAgent);
+    setIsCreateDialogOpen(false);
+    setNewAgent({
+      name: '',
+      type: 'assistant',
+      description: '',
+      capabilities: ''
+    });
+  };
 
   if (agents.length === 0) {
     return (
@@ -222,6 +240,77 @@ function AgentsView() {
           })}
         </div>
       )}
+
+      {/* Create Agent Modal */}
+      <Modal
+        isOpen={isCreateDialogOpen}
+        onClose={() => setIsCreateDialogOpen(false)}
+        title="Create New Agent"
+      >
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-2">Agent Name</label>
+            <input
+              type="text"
+              value={newAgent.name}
+              onChange={(e) => setNewAgent({ ...newAgent, name: e.target.value })}
+              placeholder="Enter agent name"
+              className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder:text-slate-500 focus:outline-none focus:border-blue-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-2">Agent Type</label>
+            <select
+              value={newAgent.type}
+              onChange={(e) => setNewAgent({ ...newAgent, type: e.target.value })}
+              className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
+            >
+              <option value="assistant">Assistant</option>
+              <option value="analyst">Analyst</option>
+              <option value="facilitator">Facilitator</option>
+              <option value="specialist">Specialist</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-2">Description</label>
+            <textarea
+              value={newAgent.description}
+              onChange={(e) => setNewAgent({ ...newAgent, description: e.target.value })}
+              placeholder="Describe what this agent does"
+              rows="3"
+              className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder:text-slate-500 focus:outline-none focus:border-blue-500 resize-none"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-2">Capabilities (comma-separated)</label>
+            <textarea
+              value={newAgent.capabilities}
+              onChange={(e) => setNewAgent({ ...newAgent, capabilities: e.target.value })}
+              placeholder="e.g., Strategic Planning, Market Analysis, Decision Support"
+              rows="3"
+              className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder:text-slate-500 focus:outline-none focus:border-blue-500 resize-none"
+            />
+          </div>
+
+          <div className="flex gap-3 pt-4">
+            <button
+              onClick={() => setIsCreateDialogOpen(false)}
+              className="flex-1 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleCreateAgent}
+              className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+            >
+              Create Agent
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }

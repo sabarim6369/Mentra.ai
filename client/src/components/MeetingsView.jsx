@@ -1,6 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Video, Plus, Search, Calendar, ArrowRight, Bot, Clock, Filter, X } from 'lucide-react';
 import Modal from './Modal';
+import { meetingsAPI } from '../api/meetings';
+import { agentsAPI } from '../api/agents';
 
 const statusColors = {
   upcoming: { bg: 'bg-blue-500/20', text: 'text-blue-300', border: 'border-blue-500/30' },
@@ -18,62 +20,49 @@ const statusLabels = {
   processing: 'Processing',
 };
 
-// Mock data
-const mockMeetings = [
-  {
-    id: '1',
-    name: 'Product Strategy Discussion',
-    status: 'upcoming',
-    agentName: 'Strategy Assistant',
-    scheduledStartTime: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
-    duration: 3600000,
-    instructions: 'Discuss Q4 product roadmap and strategic priorities for the upcoming quarter.',
-    createdAt: new Date().toISOString()
-  },
-  {
-    id: '2',
-    name: 'Team Standup',
-    status: 'active',
-    agentName: 'Meeting Facilitator',
-    scheduledStartTime: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
-    duration: 1800000,
-    instructions: 'Daily team standup to discuss progress and blockers.',
-    createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
-  },
-  {
-    id: '3',
-    name: 'Client Review Meeting',
-    status: 'completed',
-    agentName: 'Client Relations Bot',
-    scheduledStartTime: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-    duration: 5400000,
-    instructions: 'Review project deliverables with the client and gather feedback.',
-    createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString()
-  },
-  {
-    id: '4',
-    name: 'Technical Architecture Planning',
-    status: 'upcoming',
-    agentName: 'Tech Lead Assistant',
-    scheduledStartTime: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-    duration: 7200000,
-    instructions: 'Plan the technical architecture for the new microservices implementation.',
-    createdAt: new Date().toISOString()
-  }
-];
-
 function MeetingsView() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [searchInput, setSearchInput] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [meetings] = useState(mockMeetings);
+  const [meetings, setMeetings] = useState([]);
+  const [agents, setAgents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [newMeeting, setNewMeeting] = useState({
     name: '',
-    agentName: '',
+    agentId: '',
     scheduledStartTime: '',
-    duration: 60,
     instructions: ''
   });
+
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+  useEffect(() => {
+    fetchMeetings();
+    fetchAgents();
+  }, []);
+
+  const fetchMeetings = async () => {
+    try {
+      setLoading(true);
+      const data = await meetingsAPI.getAll(user.id);
+      setMeetings(data);
+    } catch (err) {
+      setError('Failed to fetch meetings');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchAgents = async () => {
+    try {
+      const data = await agentsAPI.getAll(user.id);
+      setAgents(data);
+    } catch (err) {
+      console.error('Failed to fetch agents:', err);
+    }
+  };
 
   const formatDuration = (duration) => {
     if (!duration) return null;
@@ -121,17 +110,65 @@ function MeetingsView() {
     return matchesSearch && matchesStatus;
   });
 
-  const handleCreateMeeting = () => {
-    console.log('Creating meeting:', newMeeting);
-    setIsCreateDialogOpen(false);
-    setNewMeeting({
-      name: '',
-      agentName: '',
-      scheduledStartTime: '',
-      duration: 60,
-      instructions: ''
-    });
+  const handleCreateMeeting = async () => {
+    try {
+      setError('');
+      await meetingsAPI.create({
+        name: newMeeting.name,
+        userId: user.id,
+        agentId: newMeeting.agentId,
+        instructions: newMeeting.instructions,
+        scheduledStartTime: newMeeting.scheduledStartTime ? new Date(newMeeting.scheduledStartTime).toISOString() : null
+      });
+      setIsCreateDialogOpen(false);
+      setNewMeeting({
+        name: '',
+        agentId: '',
+        scheduledStartTime: '',
+        instructions: ''
+      });
+      fetchMeetings();
+    } catch (err) {
+      setError(err.response?.data?.error || 'Failed to create meeting');
+    }
   };
+
+  const handleDeleteMeeting = async (meetingId) => {
+    try {
+      await meetingsAPI.delete(meetingId);
+      fetchMeetings();
+    } catch (err) {
+      setError('Failed to delete meeting');
+    }
+  };
+
+  const getAgentName = (agentId) => {
+    const agent = agents.find(a => a.id === agentId);
+    return agent ? agent.name : 'Unknown Agent';
+  };
+
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-white">Meetings</h1>
+            <p className="text-gray-400">Schedule and manage AI-powered meetings</p>
+          </div>
+          <button
+            onClick={() => setIsCreateDialogOpen(true)}
+            className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-lg text-white font-medium flex items-center"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            New Meeting
+          </button>
+        </div>
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-gray-400">Loading meetings...</div>
+        </div>
+      </div>
+    );
+  }
 
   if (meetings.length === 0) {
     return (
@@ -179,6 +216,12 @@ function MeetingsView() {
 
   return (
     <div className="space-y-6">
+      {error && (
+        <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
+          <p className="text-red-400 text-sm">{error}</p>
+        </div>
+      )}
+      
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-white">Meetings</h1>
@@ -189,6 +232,7 @@ function MeetingsView() {
         <button
           onClick={() => setIsCreateDialogOpen(true)}
           className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white font-medium flex items-center"
+ disabled={loading}
         >
           <Plus className="w-4 h-4 mr-2" />
           New Meeting
@@ -246,8 +290,22 @@ function MeetingsView() {
             return (
               <div 
                 key={meeting.id} 
-                className="hover:shadow-lg transition-all duration-200 cursor-pointer group hover:scale-[1.02] bg-slate-900 border border-slate-800 rounded-xl p-6"
+                className="hover:shadow-lg transition-all duration-200 cursor-pointer group hover:scale-[1.02] bg-slate-900 border border-slate-800 rounded-xl p-6 relative"
               >
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (confirm('Are you sure you want to delete this meeting?')) {
+                      handleDeleteMeeting(meeting.id);
+                    }
+                  }}
+                  className="absolute top-4 right-4 text-gray-400 hover:text-red-400 transition-colors"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </button>
+                
                 <div className="flex items-start space-x-3 mb-4">
                   <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
                     <Video className="w-6 h-6 text-white" />
@@ -260,21 +318,14 @@ function MeetingsView() {
                       <span className={`text-xs px-2 py-1 rounded-full ${statusColor.bg} ${statusColor.text} ${statusColor.border} border`}>
                         {statusLabels[meeting.status]}
                       </span>
-                      {meeting.duration && (
-                        <span className="text-xs px-2 py-1 rounded-full border border-gray-600 text-gray-300 flex items-center">
-                          <Clock className="w-3 h-3 mr-1" />
-                          {formatDuration(meeting.duration)}
-                        </span>
-                      )}
                     </div>
                   </div>
-                  <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-blue-400 group-hover:translate-x-1 transition-all opacity-0 group-hover:opacity-100" />
                 </div>
                 
                 <div className="space-y-3">
                   <div className="flex items-center space-x-2 text-sm text-slate-300">
                     <Bot className="w-4 h-4" />
-                    <span>Agent: {meeting.agentName}</span>
+                    <span>Agent: {getAgentName(meeting.agentId)}</span>
                   </div>
                   {scheduledTime && (
                     <div className="flex items-center space-x-2 text-sm text-blue-400">
@@ -316,36 +367,26 @@ function MeetingsView() {
           <div>
             <label className="block text-sm font-medium text-slate-300 mb-2">Agent</label>
             <select
-              value={newMeeting.agentName}
-              onChange={(e) => setNewMeeting({ ...newMeeting, agentName: e.target.value })}
+              value={newMeeting.agentId}
+              onChange={(e) => setNewMeeting({ ...newMeeting, agentId: e.target.value })}
               className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
+              required
             >
               <option value="">Select an agent</option>
-              <option value="Strategy Assistant">Strategy Assistant</option>
-              <option value="Meeting Facilitator">Meeting Facilitator</option>
-              <option value="Client Relations Bot">Client Relations Bot</option>
-              <option value="Tech Lead Assistant">Tech Lead Assistant</option>
+              {agents.map((agent) => (
+                <option key={agent.id} value={agent.id}>
+                  {agent.name}
+                </option>
+              ))}
             </select>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">Scheduled Time</label>
+            <label className="block text-sm font-medium text-slate-300 mb-2">Scheduled Time (optional)</label>
             <input
               type="datetime-local"
               value={newMeeting.scheduledStartTime}
               onChange={(e) => setNewMeeting({ ...newMeeting, scheduledStartTime: e.target.value })}
-              className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">Duration (minutes)</label>
-            <input
-              type="number"
-              value={newMeeting.duration}
-              onChange={(e) => setNewMeeting({ ...newMeeting, duration: parseInt(e.target.value) })}
-              min="15"
-              step="15"
               className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
             />
           </div>
@@ -358,6 +399,7 @@ function MeetingsView() {
               placeholder="Enter meeting instructions or agenda"
               rows="4"
               className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder:text-slate-500 focus:outline-none focus:border-blue-500 resize-none"
+              required
             />
           </div>
 

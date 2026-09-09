@@ -64,13 +64,67 @@ function AgentsView() {
     }
   };
 
-  if (agents.length === 0) {
-    return (
+  return (
+    <>
+      {/* Create Agent Modal - Always rendered */}
+      <Modal
+        isOpen={isCreateDialogOpen}
+        onClose={() => setIsCreateDialogOpen(false)}
+        title="Create New Agent"
+      >
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-2">Agent Name</label>
+            <input
+              type="text"
+              value={newAgent.name}
+              onChange={(e) => setNewAgent({ ...newAgent, name: e.target.value })}
+              placeholder="Enter agent name"
+              className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder:text-slate-500 focus:outline-none focus:border-blue-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-2">Instructions</label>
+            <textarea
+              value={newAgent.instructions}
+              onChange={(e) => setNewAgent({ ...newAgent, instructions: e.target.value })}
+              placeholder="Describe what this agent should do, its personality, and any specific guidelines..."
+              rows="5"
+              className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder:text-slate-500 focus:outline-none focus:border-blue-500 resize-none"
+            />
+          </div>
+
+          <div className="flex gap-3 pt-4">
+            <button
+              onClick={() => setIsCreateDialogOpen(false)}
+              className="flex-1 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleCreateAgent}
+              className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+            >
+              Create Agent
+            </button>
+          </div>
+        </div>
+      </Modal>
+
       <div className="space-y-6">
+        {error && (
+          <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
+            <p className="text-red-400 text-sm">{error}</p>
+          </div>
+        )}
+        
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-white">Agents</h1>
-            <p className="text-gray-400">Create and manage AI-powered assistants</p>
+            <p className="text-gray-400">
+              {agents.length === 0 ? 'Create and manage AI-powered assistants' : `${agents.length} agent${agents.length !== 1 ? 's' : ''} available`}
+            </p>
           </div>
           <button
             onClick={() => setIsCreateDialogOpen(true)}
@@ -80,57 +134,6 @@ function AgentsView() {
             New Agent
           </button>
         </div>
-
-        <div className="flex flex-col items-center justify-center min-h-[400px] text-center">
-          <div className="relative mb-8">
-            <div className="w-24 h-24 bg-blue-500/20 rounded-3xl flex items-center justify-center">
-              <Bot className="w-12 h-12 text-blue-400" />
-            </div>
-          </div>
-          
-          <h3 className="text-2xl font-semibold text-white mb-3">
-            Create Your First Agent
-          </h3>
-          <p className="text-gray-400 mb-6 max-w-md">
-            Build AI-powered assistants tailored to your specific needs. 
-            Configure instructions and automate your workflows.
-          </p>
-          
-          <button
-            onClick={() => setIsCreateDialogOpen(true)}
-            className="bg-blue-600 hover:bg-blue-700 shadow-lg hover:shadow-xl transition-all duration-200 px-6 py-3 rounded-lg text-white font-medium flex items-center"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Create Your First Agent
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="space-y-6">
-      {error && (
-        <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
-          <p className="text-red-400 text-sm">{error}</p>
-        </div>
-      )}
-      
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-white">Agents</h1>
-          <p className="text-gray-400">
-            {agents.length} agent{agents.length !== 1 ? 's' : ''} available
-          </p>
-        </div>
-        <button
-          onClick={() => setIsCreateDialogOpen(true)}
-          className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white font-medium flex items-center"
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          New Agent
-        </button>
-      </div>
 
       <div className="flex items-center space-x-4">
         <div className="relative max-w-md flex-1">
@@ -200,53 +203,8 @@ function AgentsView() {
           ))}
         </div>
       )}
-
-      {/* Create Agent Modal */}
-      <Modal
-        isOpen={isCreateDialogOpen}
-        onClose={() => setIsCreateDialogOpen(false)}
-        title="Create New Agent"
-      >
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">Agent Name</label>
-            <input
-              type="text"
-              value={newAgent.name}
-              onChange={(e) => setNewAgent({ ...newAgent, name: e.target.value })}
-              placeholder="Enter agent name"
-              className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder:text-slate-500 focus:outline-none focus:border-blue-500"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">Instructions</label>
-            <textarea
-              value={newAgent.instructions}
-              onChange={(e) => setNewAgent({ ...newAgent, instructions: e.target.value })}
-              placeholder="Describe what this agent should do, its personality, and any specific guidelines..."
-              rows="5"
-              className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder:text-slate-500 focus:outline-none focus:border-blue-500 resize-none"
-            />
-          </div>
-
-          <div className="flex gap-3 pt-4">
-            <button
-              onClick={() => setIsCreateDialogOpen(false)}
-              className="flex-1 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleCreateAgent}
-              className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
-            >
-              Create Agent
-            </button>
-          </div>
-        </div>
-      </Modal>
     </div>
+    </>
   );
 }
 

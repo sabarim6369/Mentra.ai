@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Meeting = require('../models/Meeting');
+const { streamVideo } = require('../config/streamVideo');
 
 // Get all meetings for a user
 router.get('/', async (req, res) => {
@@ -112,6 +113,39 @@ router.delete('/:id', async (req, res) => {
 
     res.json({ message: 'Meeting deleted successfully' });
   } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Generate Stream Video token for a meeting
+router.post('/:id/token', async (req, res) => {
+  try {
+    const { userId } = req.body;
+    const meetingId = req.params.id;
+
+    if (!userId) {
+      return res.status(400).json({ error: 'userId is required' });
+    }
+
+    // Verify meeting exists and belongs to user
+    const meeting = await Meeting.findOne({ id: meetingId, userId });
+
+    if (!meeting) {
+      return res.status(404).json({ error: 'Meeting not found' });
+    }
+
+    // Generate Stream Video token
+    const token = streamVideo.createCallToken({
+      user_id: userId,
+      call_cid: `default:${meetingId}`,
+      role: 'user',
+    });
+
+    console.log(`[TOKEN] Generated token for meeting ${meetingId}, user ${userId}`);
+
+    res.json({ token });
+  } catch (error) {
+    console.error('[TOKEN] Error generating token:', error);
     res.status(500).json({ error: error.message });
   }
 });

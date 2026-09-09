@@ -32,4 +32,10 @@ export const meetingsAPI = {
     const response = await api.delete(`/meetings/${meetingId}`);
     return response.data;
   },
+
+  // Generate Stream Video token for meeting
+  generateToken: async (meetingId, userId) => {
+    const response = await api.post(`/meetings/${meetingId}/token`, { userId });
+    return response.data;
+  },
 };

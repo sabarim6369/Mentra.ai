@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import { nanoid } from 'nanoid';
 import { authAPI } from '../api/auth';
+import { useAuth } from '../contexts/AuthContext';
 
 function SignupPage() {
   const [name, setName] = useState('');
@@ -12,6 +13,7 @@ function SignupPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -38,9 +40,8 @@ function SignupPage() {
         password
       });
       
-      // Store token and user in localStorage
-      localStorage.setItem('token', response.token);
-      localStorage.setItem('user', JSON.stringify(response.user));
+      // Use AuthContext login method which stores token with timestamp
+      login(response.token, response.user);
       
       // Navigate to dashboard
       navigate('/dashboard');

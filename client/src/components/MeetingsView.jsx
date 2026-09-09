@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Video, Plus, Search, Calendar, ArrowRight, Bot, Clock, Filter, X } from 'lucide-react';
 import Modal from './Modal';
 import { meetingsAPI } from '../api/meetings';
@@ -21,6 +22,7 @@ const statusLabels = {
 };
 
 function MeetingsView() {
+  const navigate = useNavigate();
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [searchInput, setSearchInput] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -57,10 +59,13 @@ function MeetingsView() {
 
   const fetchAgents = async () => {
     try {
+      console.log('Fetching agents for user:', user.id);
       const data = await agentsAPI.getAll(user.id);
+      console.log('Fetched agents:', data);
       setAgents(data);
     } catch (err) {
       console.error('Failed to fetch agents:', err);
+      setError('Failed to fetch agents');
     }
   };
 
@@ -133,6 +138,13 @@ function MeetingsView() {
     }
   };
 
+  // Refetch agents when modal opens
+  useEffect(() => {
+    if (isCreateDialogOpen) {
+      fetchAgents();
+    }
+  }, [isCreateDialogOpen]);
+
   const handleDeleteMeeting = async (meetingId) => {
     try {
       await meetingsAPI.delete(meetingId);
@@ -176,12 +188,23 @@ function MeetingsView() {
               required
             >
               <option value="">Select an agent</option>
-              {agents.map((agent) => (
-                <option key={agent.id} value={agent.id}>
-                  {agent.name}
+              {agents.length === 0 ? (
+                <option value="" disabled>
+                  No agents available - Please create an agent first
                 </option>
-              ))}
+              ) : (
+                agents.map((agent) => (
+                  <option key={agent.id} value={agent.id}>
+                    {agent.name}
+                  </option>
+                ))
+              )}
             </select>
+            {agents.length === 0 && (
+              <p className="text-xs text-amber-400 mt-1">
+                You need to create an agent before creating a meeting
+              </p>
+            )}
           </div>
 
           <div>
@@ -335,6 +358,7 @@ function MeetingsView() {
                     <div 
                       key={meeting.id} 
                       className="hover:shadow-lg transition-all duration-200 cursor-pointer group hover:scale-[1.02] bg-slate-900 border border-slate-800 rounded-xl p-6 relative"
+                      onClick={() => navigate(`/meeting/${meeting.id}`)}
                     >
                       <button
                         onClick={(e) => {
@@ -343,7 +367,7 @@ function MeetingsView() {
                             handleDeleteMeeting(meeting.id);
                           }
                         }}
-                        className="absolute top-4 right-4 text-gray-400 hover:text-red-400 transition-colors"
+                        className="absolute top-4 right-4 text-gray-400 hover:text-red-400 transition-colors z-10"
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />

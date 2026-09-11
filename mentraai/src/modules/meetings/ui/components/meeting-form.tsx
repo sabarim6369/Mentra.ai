@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { Video, Bot, Plus, Calendar, Clock, Play } from "lucide-react";
+import { Video, Bot, Plus, Calendar, Clock, Play, FileText, Globe, X, Upload } from "lucide-react";
 import { meetingsInsertSchema, type MeetingsInsert } from "../../schema";
 import { useTRPC } from "@/trpc/client";
 import { useQuery } from "@tanstack/react-query";
@@ -32,6 +32,9 @@ export function MeetingForm({
 }: MeetingFormProps) {
   const [error, setError] = useState<string>("");
   const [startNow, setStartNow] = useState(false);
+  const [knowledgeFiles, setKnowledgeFiles] = useState<File[]>([]);
+  const [knowledgeUrls, setKnowledgeUrls] = useState<string[]>([]);
+  const [urlInput, setUrlInput] = useState<string>("");
   const trpc = useTRPC();
   const router = useRouter();
 
@@ -71,6 +74,9 @@ export function MeetingForm({
       if (!defaultValues) {
         reset();
         setStartNow(false);
+        setKnowledgeFiles([]);
+        setKnowledgeUrls([]);
+        setUrlInput("");
       }
     } catch (err: any) {
       setError(err.message || "Something went wrong");
@@ -79,6 +85,29 @@ export function MeetingForm({
 
   const handleCreateAgent = () => {
     router.push("/dashboard/agents");
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files) {
+      const newFiles = Array.from(files);
+      setKnowledgeFiles(prev => [...prev, ...newFiles]);
+    }
+  };
+
+  const handleAddUrl = () => {
+    if (urlInput.trim()) {
+      setKnowledgeUrls(prev => [...prev, urlInput.trim()]);
+      setUrlInput("");
+    }
+  };
+
+  const handleRemoveFile = (index: number) => {
+    setKnowledgeFiles(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleRemoveUrl = (index: number) => {
+    setKnowledgeUrls(prev => prev.filter((_, i) => i !== index));
   };
 
   const formatDateTimeLocal = (date: Date) => {
@@ -175,6 +204,111 @@ export function MeetingForm({
           )}
         </div>
 
+        <div className="space-y-2">
+          <Label className="text-gray-700 font-medium">
+            Knowledge Sources
+          </Label>
+          <p className="text-sm text-gray-500">
+            Optionally add documents or websites as context for the meeting
+          </p>
+          
+          <div className="space-y-3">
+            <div className="flex space-x-2">
+              <input
+                type="file"
+                id="knowledge-file-upload"
+                className="hidden"
+                accept=".pdf,.docx,.txt"
+                multiple
+                onChange={handleFileUpload}
+              />
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => document.getElementById('knowledge-file-upload')?.click()}
+                className="flex-1"
+              >
+                <Upload className="w-4 h-4 mr-2" />
+                Upload Document
+              </Button>
+            </div>
+            
+            <div className="flex space-x-2">
+              <div className="flex-1 relative">
+                <Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <Input
+                  placeholder="Paste website URL"
+                  value={urlInput}
+                  onChange={(e) => setUrlInput(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleAddUrl()}
+                  className="pl-10"
+                />
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleAddUrl}
+                disabled={!urlInput.trim()}
+              >
+                Add
+              </Button>
+            </div>
+          </div>
+
+          {(knowledgeFiles.length > 0 || knowledgeUrls.length > 0) && (
+            <div className="space-y-2 mt-3">
+              <Label className="text-sm text-gray-600 font-medium">
+                Added Sources
+              </Label>
+              <div className="space-y-2">
+                {knowledgeFiles.map((file, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between p-3 bg-gray-50 border border-gray-200 rounded-lg"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <FileText className="w-4 h-4 text-gray-500" />
+                      <span className="text-sm text-gray-700">{file.name}</span>
+                      <span className="text-xs text-gray-400">
+                        ({(file.size / 1024).toFixed(1)} KB)
+                      </span>
+                    </div>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleRemoveFile(index)}
+                      className="hover:bg-red-50 hover:text-red-600"
+                    >
+                      <X className="w-4 h-4" />
+                    </Button>
+                  </div>
+                ))}
+                {knowledgeUrls.map((url, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between p-3 bg-gray-50 border border-gray-200 rounded-lg"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <Globe className="w-4 h-4 text-gray-500" />
+                      <span className="text-sm text-gray-700 truncate max-w-md">{url}</span>
+                    </div>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleRemoveUrl(index)}
+                      className="hover:bg-red-50 hover:text-red-600"
+                    >
+                      <X className="w-4 h-4" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
         <div className="space-y-4">
           <div className="flex items-center space-x-3 p-4 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg">
             <Switch
@@ -199,15 +333,30 @@ export function MeetingForm({
                 Schedule Date & Time
               </Label>
               <div className="relative">
-                <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <Input
+                <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />
+                <input
                   id="scheduledStartTime"
                   type="datetime-local"
                   min={getMinDateTime()}
-                  className="pl-10"
-                  {...register("scheduledStartTime", {
-                    setValueAs: (value) => value ? new Date(value) : undefined
-                  })}
+                  className="pl-10 h-9 w-full min-w-0 rounded-md border border-gray-300 bg-transparent px-3 py-1 text-base shadow-sm transition-colors outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 md:text-sm"
+                  value={watch("scheduledStartTime") instanceof Date 
+                    ? formatDateTimeLocal(watch("scheduledStartTime") as Date)
+                    : ""
+                  }
+                  onChange={(e) => {
+                    console.log('[DATE PICKER] Value changed:', e.target.value);
+                    setValue("scheduledStartTime", e.target.value ? new Date(e.target.value) : undefined);
+                  }}
+                  onClick={() => {
+                    console.log('[DATE PICKER] Input clicked');
+                    console.log('[DATE PICKER] Current value:', watch("scheduledStartTime"));
+                    console.log('[DATE PICKER] Formatted value:', watch("scheduledStartTime") instanceof Date 
+                      ? formatDateTimeLocal(watch("scheduledStartTime") as Date)
+                      : "empty");
+                  }}
+                  onFocus={() => {
+                    console.log('[DATE PICKER] Input focused');
+                  }}
                 />
               </div>
               {errors.scheduledStartTime && (

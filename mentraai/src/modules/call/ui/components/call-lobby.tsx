@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   useCallStateHooks,
@@ -40,7 +40,7 @@ export const CallLobby = ({ onJoin }: CallLobbyProps) => {
     }
   };
 
-  const requestPermissions = async () => {
+  const requestPermissions = useCallback(async () => {
     try {
       setDeviceError(null);
       const devices = await checkDevices();
@@ -55,22 +55,28 @@ export const CallLobby = ({ onJoin }: CallLobbyProps) => {
       if (devices.video) constraints.video = true;
       if (devices.audio) constraints.audio = true;
 
-      await navigator.mediaDevices.getUserMedia(constraints);
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      
+      // Stop the stream immediately after getting permissions
+      stream.getTracks().forEach(track => track.stop());
+      
       setPermissionsGranted(true);
     } catch (error: any) {
-      console.error('Failed to get media permissions:', error);
+      console.error('[PERMISSIONS] Failed to get media permissions:', error);
       setPermissionsGranted(false);
       
       if (error.name === 'NotFoundError') {
         setDeviceError('No camera or microphone found. Please connect a device or continue without media.');
       } else if (error.name === 'NotAllowedError') {
         setDeviceError('Permission denied. Please allow camera/microphone access in your browser settings.');
+      } else if (error.name === 'NotReadableError') {
+        setDeviceError('Could not access camera/microphone. Another app might be using them.');
       } else {
         setDeviceError(`Failed to access devices: ${error.message}`);
       }
-      throw error;
+      // Don't throw error - allow user to continue without media
     }
-  };
+  }, []);
 
   const userImage = session?.user.image || generateAvatarUri({
     seed: session?.user.name || 'User',
@@ -84,7 +90,7 @@ export const CallLobby = ({ onJoin }: CallLobbyProps) => {
   const handleJoin = async () => {
     setIsLoading(true);
     try {
-      await onJoin(hasDevices.audio);
+      await onJoin(hasDevices.audio || permissionsGranted);
     } catch (error) {
       console.error('Failed to join call:', error);
       setIsLoading(false);
@@ -106,6 +112,11 @@ export const CallLobby = ({ onJoin }: CallLobbyProps) => {
       console.error('Failed to toggle microphone:', error);
     }
   };
+
+  useEffect(() => {
+    // Automatically request permissions on mount
+    requestPermissions();
+  }, [requestPermissions]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white">
@@ -204,6 +215,13 @@ export const CallLobby = ({ onJoin }: CallLobbyProps) => {
                     <p className="text-red-300/80 text-xs mb-3">
                       {deviceError}
                     </p>
+                    <Button
+                      onClick={requestPermissions}
+                      className="w-full bg-red-600 hover:bg-red-700 text-white"
+                      size="sm"
+                    >
+                      Retry Permissions
+                    </Button>
                   </div>
                 )}
 
@@ -287,7 +305,7 @@ export const CallLobby = ({ onJoin }: CallLobbyProps) => {
               <div className="flex flex-col space-y-3">
                 <Button
                   onClick={handleJoin}
-                  disabled={!permissionsGranted || isLoading}
+                  disabled={isLoading}
                   className="w-full h-14 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold rounded-xl shadow-xl transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:transform-none"
                 >
                   {isLoading ? (

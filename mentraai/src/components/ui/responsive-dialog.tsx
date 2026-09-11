@@ -42,7 +42,7 @@ export function ResponsiveDialog({
             {title && <DrawerTitle>{title}</DrawerTitle>}
             {description && <DrawerDescription>{description}</DrawerDescription>}
           </DrawerHeader>
-          <div className="px-4 pb-6">{children}</div>
+          <div className="px-4 pb-6 max-h-[70vh] overflow-y-auto">{children}</div>
         </DrawerContent>
       </Drawer>
     )
@@ -55,7 +55,9 @@ export function ResponsiveDialog({
           {title && <DialogTitle>{title}</DialogTitle>}
           {description && <DialogDescription>{description}</DialogDescription>}
         </DialogHeader>
-        {children}
+        <div className="max-h-[80vh] overflow-y-auto">
+          {children}
+        </div>
       </DialogContent>
     </Dialog>
   )
